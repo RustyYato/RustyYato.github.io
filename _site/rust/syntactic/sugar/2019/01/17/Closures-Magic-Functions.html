@@ -374,7 +374,7 @@ directly, you can use them like so</p>
 
 <span class="k">let</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">__closure_5__</span> <span class="p">{</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span> <span class="p">};</span>
 
-<span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">transform</span><span class="nf">.call_once</span><span class="p">(()));</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nn">FnOnce</span><span class="p">::</span><span class="nf">call_once</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="p">()));</span>
 <span class="c">// println!("{}", transform.call_once(())); // error[E0382]: use of moved value: `transform`</span>
 </code></pre></div></div>
 

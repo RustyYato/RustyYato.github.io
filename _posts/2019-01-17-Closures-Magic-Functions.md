@@ -349,7 +349,7 @@ let a = vec![0, 1, 2, 3, 4, 5, 100];
 
 let transform = __closure_5__ { a: a };
 
-println!("{}", transform.call_once(()));
+println!("{}", FnOnce::call_once(transform, ()));
 // println!("{}", transform.call_once(())); // error[E0382]: use of moved value: `transform`
 ```
 
