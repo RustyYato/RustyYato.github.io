@@ -5,7 +5,7 @@ date:   2019-01-17 12:00:00 -0700
 categories: rust syntactic sugar
 ---
 
-If you want to resond to this post, please respond via [Rust users](https://users.rust-lang.org/t/blog-closures-magic-functions/24306) or [Reddit](https://www.reddit.com/r/rust/comments/ah307y/blog_closures_magic_functions/).
+If you want to respond to this post, please respond via [Rust users](https://users.rust-lang.org/t/blog-closures-magic-functions/24306) or [Reddit](https://www.reddit.com/r/rust/comments/ah307y/blog_closures_magic_functions/).
 
 
 ---
