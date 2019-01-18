@@ -163,6 +163,8 @@ directly, you can use them like so</p>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">::</span><span class="nf">call</span><span class="p">(</span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="p">());</span>
 </code></pre></div></div>
 
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=d43d7b0894c41e78365413a56bcfb20d">Playground Link <strong>closure_0</strong></a></p>
+
 <p>Now, there is quite a bit to unpack here. First we get this new type <code class="highlighter-rouge">__closure_0__</code>. We can also see that <code class="highlighter-rouge">Clone</code> and <code class="highlighter-rouge">Copy</code> are derived for <code class="highlighter-rouge">__closure_0__</code>. This is because it is an empty type so it is trivial to <code class="highlighter-rouge">Clone</code> and <code class="highlighter-rouge">Copy</code> an empty struct. This allows for more flexiblity when using the closure.</p>
 
 <p>Rust will pick the most specific <code class="highlighter-rouge">Fn*</code> trait to use whenever you call a function, in this order: <code class="highlighter-rouge">Fn</code>, <code class="highlighter-rouge">FnMut</code>, <code class="highlighter-rouge">FnOnce</code>. So in this case, because we can implement <code class="highlighter-rouge">Fn</code>, we implement that and all pre-requisites (<code class="highlighter-rouge">FnMut</code> and <code class="highlighter-rouge">FnOnce</code>). The function body from the closure is copied over to the function body of each of <code class="highlighter-rouge">call*</code> functions.</p>
@@ -174,8 +176,6 @@ directly, you can use them like so</p>
 <p><em>Note:</em> How Rust knows which <code class="highlighter-rouge">Fn*</code> trait to derive for the closure is up to analysis of what it captures and how it is used (seen later).</p>
 
 <p>You can use these playground links to test out the desugared code!</p>
-
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=d43d7b0894c41e78365413a56bcfb20d">Playground Link <strong>closure_0</strong></a></p>
 
 <hr />
 <p>Now one step up, lets capture a variable.</p>
@@ -204,13 +204,14 @@ directly, you can use them like so</p>
 
 <span class="nn">Fn</span><span class="p">::</span><span class="nf">call</span><span class="p">(</span><span class="o">&amp;</span><span class="n">print_me</span><span class="p">,</span> <span class="p">());</span>
 </code></pre></div></div>
+
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=c6e017ceb489566268b1f0fd28f8be04">Playground Link <strong>closure_1</strong></a></p>
+
 <p>We now have a field on <code class="highlighter-rouge">__closure_1__</code>, this represents the enviornment that is being used. So when we go to implement the <code class="highlighter-rouge">Fn*</code> traits, we use these fields to get access to the enviornment. Whenever Rust accesses one of these fields, it first dereferences them, the reason why will become evident when we get to mutating closures.</p>
 
 <p>Notice the lifetime parameter on <code class="highlighter-rouge">__closure_1__</code>, because it is borrowing from the stack frame with <code class="highlighter-rouge">&amp;message</code>, <code class="highlighter-rouge">print_me</code> has a non-<code class="highlighter-rouge">'static</code> lifetime. One downside to this is that it can’t be sent across threads! Threads require a <code class="highlighter-rouge">'static</code> lifetime so that things don’t deallocate while they run.</p>
 
 <p>We still maintain <code class="highlighter-rouge">Clone</code> and <code class="highlighter-rouge">Copy</code> because shared references are <code class="highlighter-rouge">Copy</code>.</p>
-
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=c6e017ceb489566268b1f0fd28f8be04">Playground Link <strong>closure_1</strong></a></p>
 
 <hr />
 <p>Now, what about if I have a closure with arguments? What about <code class="highlighter-rouge">move</code> closures?</p>
@@ -240,6 +241,9 @@ directly, you can use them like so</p>
 
 <span class="nn">Fn</span><span class="p">::</span><span class="nf">call</span><span class="p">(</span><span class="o">&amp;</span><span class="n">print_me</span><span class="p">,</span> <span class="p">(</span><span class="s">"Hello World!"</span><span class="p">,));</span>
 </code></pre></div></div>
+
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=4ebcba27e4163605964645b1f553c5f2">Playground Link <strong>closure_2</strong></a></p>
+
 <p>First, the types of the closure arguments are resolved via type inference.</p>
 
 <p>Next, how are arguments handled? As we saw earlier in the <code class="highlighter-rouge">Fn* Traits</code> section, arguments are really just a single tuple containing all of the arguments. This tuple is automatically created whenever we call a closure and destructured inside the <code class="highlighter-rouge">call*</code> function.</p>
@@ -247,8 +251,6 @@ directly, you can use them like so</p>
 <p>Finally, what did <code class="highlighter-rouge">move</code> do? Simply, instead of borrowing from the enviornment, we are going to move everything from the enviornment into this new anonomous struct (<code class="highlighter-rouge">__closure_2__</code>). Now because <code class="highlighter-rouge">__closure_2__</code> doesn’t contain any lifetimes, it has a <code class="highlighter-rouge">'static</code> lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost <code class="highlighter-rouge">Copy</code>, now our closure in only <code class="highlighter-rouge">Clone</code>. :(</p>
 
 <p>This is why when you do anything with threads, you need to use <code class="highlighter-rouge">move</code> closures. They eliminate many of the references that would otherwise be created.</p>
-
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=4ebcba27e4163605964645b1f553c5f2">Playground Link <strong>closure_2</strong></a></p>
 
 <hr />
 <p>More on <code class="highlighter-rouge">move</code></p>
@@ -288,9 +290,9 @@ directly, you can use them like so</p>
 <span class="nn">Fn</span><span class="p">::</span><span class="nf">call</span><span class="p">(</span><span class="o">&amp;</span><span class="n">print_me</span><span class="p">,</span> <span class="p">());</span>
 </code></pre></div></div>
 
-<p>Notice that even though we have a <code class="highlighter-rouge">move</code> closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be <code class="highlighter-rouge">'static</code>, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than <code class="highlighter-rouge">'static</code></p>
-
 <p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=bdb0e9a398b07e3bead33b2ddf952edf">Playground Link <strong>closure_3</strong></a></p>
+
+<p>Notice that even though we have a <code class="highlighter-rouge">move</code> closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be <code class="highlighter-rouge">'static</code>, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than <code class="highlighter-rouge">'static</code></p>
 
 <hr />
 <p>What about returning things from closures, and mutating the enviornment inside a closure.</p>
@@ -336,13 +338,13 @@ directly, you can use them like so</p>
 <span class="nd">assert_eq!</span><span class="p">(</span><span class="nn">FnMut</span><span class="p">::</span><span class="nf">call_mut</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">next</span><span class="p">,</span> <span class="p">()),</span> <span class="mi">6</span><span class="p">);</span>
 </code></pre></div></div>
 
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=0fa923cb58ee9077b7788b37aa0ff372">Playground Link <strong>closure_4</strong></a></p>
+
 <p>Because we are changing counter inside of the closure, we can implement at most <code class="highlighter-rouge">FnMut</code>. This is because we don’t have write access inside of <code class="highlighter-rouge">Fn</code>.</p>
 
 <p>We take a <code class="highlighter-rouge">&amp;mut</code> to <code class="highlighter-rouge">counter</code> so that we can change it, and a <code class="highlighter-rouge">&amp;</code> to delta to read from it. Each reference gets a fresh lifetime parameter.</p>
 
 <p>We can now see why we need to dereference the references inside of <code class="highlighter-rouge">call*</code>. This is because we need the correct types for things to work out. For example, there is no impl of <code class="highlighter-rouge">AddAssign</code> for <code class="highlighter-rouge">&amp;mut u32</code>, but there is one for <code class="highlighter-rouge">u32</code>. So we need to dereference <code class="highlighter-rouge">self.counter</code> so that Rust can resolve <code class="highlighter-rouge">AddAssign</code> correctly. There is nothing special about <code class="highlighter-rouge">AddAssign</code>,  type inference requires that these types are dereferenced in order to work correctly.</p>
-
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=0fa923cb58ee9077b7788b37aa0ff372">Playground Link <strong>closure_4</strong></a></p>
 
 <hr />
 <p>What about consuming things in a closure</p>
@@ -382,9 +384,9 @@ directly, you can use them like so</p>
 <span class="c">// println!("{}", transform.call_once(())); // error[E0382]: use of moved value: `transform`</span>
 </code></pre></div></div>
 
-<p>Even though we didn’t add the <code class="highlighter-rouge">move</code> qualifier to the closure we see that <code class="highlighter-rouge">a</code> was moved into the closure. This is because <code class="highlighter-rouge">Vec::into_iter</code> takes <code class="highlighter-rouge">self</code> be value, which means <code class="highlighter-rouge">self</code> will be moved into the function. Because of this, the Rust moves a into <code class="highlighter-rouge">__closure_5__</code>. This means that <code class="highlighter-rouge">a</code> must be consumed during the function call, only <code class="highlighter-rouge">FnOnce</code> can be implemented.</p>
-
 <p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=ca812f04fd250c760c5fbc328d9590fe">Playground Link <strong>closure_5</strong></a></p>
+
+<p>Even though we didn’t add the <code class="highlighter-rouge">move</code> qualifier to the closure we see that <code class="highlighter-rouge">a</code> was moved into the closure. This is because <code class="highlighter-rouge">Vec::into_iter</code> takes <code class="highlighter-rouge">self</code> be value, which means <code class="highlighter-rouge">self</code> will be moved into the function. Because of this, the Rust moves a into <code class="highlighter-rouge">__closure_5__</code>. This means that <code class="highlighter-rouge">a</code> must be consumed during the function call, only <code class="highlighter-rouge">FnOnce</code> can be implemented.</p>
 
   </div><a class="u-url" href="/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html" hidden></a>
 </article>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-01-17T17:58:12-07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rusty Yato</title><subtitle>A blog about the Rust Programming Language! Here we will delve into various parts of Rust and see how it works.</subtitle><entry><title type="html">Closures: Magic Functions</title><link href="http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html" rel="alternate" type="text/html" title="Closures: Magic Functions" /><published>2019-01-17T12:00:00-07:00</published><updated>2019-01-17T12:00:00-07:00</updated><id>http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions</id><content type="html" xml:base="http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html">&lt;p&gt;If you want to respond to this post, please respond via &lt;a href=&quot;https://users.rust-lang.org/t/blog-closures-magic-functions/24306&quot;&gt;Rust users&lt;/a&gt; or &lt;a href=&quot;https://www.reddit.com/r/rust/comments/ah307y/blog_closures_magic_functions/&quot;&gt;Reddit&lt;/a&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-01-17T18:05:31-07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Rusty Yato</title><subtitle>A blog about the Rust Programming Language! Here we will delve into various parts of Rust and see how it works.</subtitle><entry><title type="html">Closures: Magic Functions</title><link href="http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html" rel="alternate" type="text/html" title="Closures: Magic Functions" /><published>2019-01-17T12:00:00-07:00</published><updated>2019-01-17T12:00:00-07:00</updated><id>http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions</id><content type="html" xml:base="http://localhost:4000/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html">&lt;p&gt;If you want to respond to this post, please respond via &lt;a href=&quot;https://users.rust-lang.org/t/blog-closures-magic-functions/24306&quot;&gt;Rust users&lt;/a&gt; or &lt;a href=&quot;https://www.reddit.com/r/rust/comments/ah307y/blog_closures_magic_functions/&quot;&gt;Reddit&lt;/a&gt;.&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -116,6 +116,8 @@ directly, you can use them like so&lt;/p&gt;
 &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Fn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=d43d7b0894c41e78365413a56bcfb20d&quot;&gt;Playground Link &lt;strong&gt;closure_0&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;Now, there is quite a bit to unpack here. First we get this new type &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_0__&lt;/code&gt;. We can also see that &lt;code class=&quot;highlighter-rouge&quot;&gt;Clone&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Copy&lt;/code&gt; are derived for &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_0__&lt;/code&gt;. This is because it is an empty type so it is trivial to &lt;code class=&quot;highlighter-rouge&quot;&gt;Clone&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Copy&lt;/code&gt; an empty struct. This allows for more flexiblity when using the closure.&lt;/p&gt;
 
 &lt;p&gt;Rust will pick the most specific &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn*&lt;/code&gt; trait to use whenever you call a function, in this order: &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;FnMut&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;FnOnce&lt;/code&gt;. So in this case, because we can implement &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn&lt;/code&gt;, we implement that and all pre-requisites (&lt;code class=&quot;highlighter-rouge&quot;&gt;FnMut&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;FnOnce&lt;/code&gt;). The function body from the closure is copied over to the function body of each of &lt;code class=&quot;highlighter-rouge&quot;&gt;call*&lt;/code&gt; functions.&lt;/p&gt;
@@ -127,8 +129,6 @@ directly, you can use them like so&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; How Rust knows which &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn*&lt;/code&gt; trait to derive for the closure is up to analysis of what it captures and how it is used (seen later).&lt;/p&gt;
 
 &lt;p&gt;You can use these playground links to test out the desugared code!&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=d43d7b0894c41e78365413a56bcfb20d&quot;&gt;Playground Link &lt;strong&gt;closure_0&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;Now one step up, lets capture a variable.&lt;/p&gt;
@@ -157,13 +157,14 @@ directly, you can use them like so&lt;/p&gt;
 
 &lt;span class=&quot;nn&quot;&gt;Fn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;print_me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=c6e017ceb489566268b1f0fd28f8be04&quot;&gt;Playground Link &lt;strong&gt;closure_1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;We now have a field on &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_1__&lt;/code&gt;, this represents the enviornment that is being used. So when we go to implement the &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn*&lt;/code&gt; traits, we use these fields to get access to the enviornment. Whenever Rust accesses one of these fields, it first dereferences them, the reason why will become evident when we get to mutating closures.&lt;/p&gt;
 
 &lt;p&gt;Notice the lifetime parameter on &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_1__&lt;/code&gt;, because it is borrowing from the stack frame with &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;message&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;print_me&lt;/code&gt; has a non-&lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt; lifetime. One downside to this is that it can’t be sent across threads! Threads require a &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt; lifetime so that things don’t deallocate while they run.&lt;/p&gt;
 
 &lt;p&gt;We still maintain &lt;code class=&quot;highlighter-rouge&quot;&gt;Clone&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Copy&lt;/code&gt; because shared references are &lt;code class=&quot;highlighter-rouge&quot;&gt;Copy&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=c6e017ceb489566268b1f0fd28f8be04&quot;&gt;Playground Link &lt;strong&gt;closure_1&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;Now, what about if I have a closure with arguments? What about &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; closures?&lt;/p&gt;
@@ -193,6 +194,9 @@ directly, you can use them like so&lt;/p&gt;
 
 &lt;span class=&quot;nn&quot;&gt;Fn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;print_me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,));&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=4ebcba27e4163605964645b1f553c5f2&quot;&gt;Playground Link &lt;strong&gt;closure_2&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;First, the types of the closure arguments are resolved via type inference.&lt;/p&gt;
 
 &lt;p&gt;Next, how are arguments handled? As we saw earlier in the &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn* Traits&lt;/code&gt; section, arguments are really just a single tuple containing all of the arguments. This tuple is automatically created whenever we call a closure and destructured inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;call*&lt;/code&gt; function.&lt;/p&gt;
@@ -200,8 +204,6 @@ directly, you can use them like so&lt;/p&gt;
 &lt;p&gt;Finally, what did &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; do? Simply, instead of borrowing from the enviornment, we are going to move everything from the enviornment into this new anonomous struct (&lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_2__&lt;/code&gt;). Now because &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_2__&lt;/code&gt; doesn’t contain any lifetimes, it has a &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt; lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost &lt;code class=&quot;highlighter-rouge&quot;&gt;Copy&lt;/code&gt;, now our closure in only &lt;code class=&quot;highlighter-rouge&quot;&gt;Clone&lt;/code&gt;. :(&lt;/p&gt;
 
 &lt;p&gt;This is why when you do anything with threads, you need to use &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; closures. They eliminate many of the references that would otherwise be created.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=4ebcba27e4163605964645b1f553c5f2&quot;&gt;Playground Link &lt;strong&gt;closure_2&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;More on &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt;&lt;/p&gt;
@@ -241,9 +243,9 @@ directly, you can use them like so&lt;/p&gt;
 &lt;span class=&quot;nn&quot;&gt;Fn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;print_me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Notice that even though we have a &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt;, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt;&lt;/p&gt;
-
 &lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=bdb0e9a398b07e3bead33b2ddf952edf&quot;&gt;Playground Link &lt;strong&gt;closure_3&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Notice that even though we have a &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt;, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than &lt;code class=&quot;highlighter-rouge&quot;&gt;'static&lt;/code&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;What about returning things from closures, and mutating the enviornment inside a closure.&lt;/p&gt;
@@ -289,13 +291,13 @@ directly, you can use them like so&lt;/p&gt;
 &lt;span class=&quot;nd&quot;&gt;assert_eq!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;FnMut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call_mut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=0fa923cb58ee9077b7788b37aa0ff372&quot;&gt;Playground Link &lt;strong&gt;closure_4&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;Because we are changing counter inside of the closure, we can implement at most &lt;code class=&quot;highlighter-rouge&quot;&gt;FnMut&lt;/code&gt;. This is because we don’t have write access inside of &lt;code class=&quot;highlighter-rouge&quot;&gt;Fn&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;We take a &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;mut&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;counter&lt;/code&gt; so that we can change it, and a &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;&lt;/code&gt; to delta to read from it. Each reference gets a fresh lifetime parameter.&lt;/p&gt;
 
 &lt;p&gt;We can now see why we need to dereference the references inside of &lt;code class=&quot;highlighter-rouge&quot;&gt;call*&lt;/code&gt;. This is because we need the correct types for things to work out. For example, there is no impl of &lt;code class=&quot;highlighter-rouge&quot;&gt;AddAssign&lt;/code&gt; for &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;mut u32&lt;/code&gt;, but there is one for &lt;code class=&quot;highlighter-rouge&quot;&gt;u32&lt;/code&gt;. So we need to dereference &lt;code class=&quot;highlighter-rouge&quot;&gt;self.counter&lt;/code&gt; so that Rust can resolve &lt;code class=&quot;highlighter-rouge&quot;&gt;AddAssign&lt;/code&gt; correctly. There is nothing special about &lt;code class=&quot;highlighter-rouge&quot;&gt;AddAssign&lt;/code&gt;,  type inference requires that these types are dereferenced in order to work correctly.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=0fa923cb58ee9077b7788b37aa0ff372&quot;&gt;Playground Link &lt;strong&gt;closure_4&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;What about consuming things in a closure&lt;/p&gt;
@@ -335,6 +337,6 @@ directly, you can use them like so&lt;/p&gt;
 &lt;span class=&quot;c&quot;&gt;// println!(&quot;{}&quot;, transform.call_once(())); // error[E0382]: use of moved value: `transform`&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Even though we didn’t add the &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; qualifier to the closure we see that &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; was moved into the closure. This is because &lt;code class=&quot;highlighter-rouge&quot;&gt;Vec::into_iter&lt;/code&gt; takes &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; be value, which means &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; will be moved into the function. Because of this, the Rust moves a into &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_5__&lt;/code&gt;. This means that &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; must be consumed during the function call, only &lt;code class=&quot;highlighter-rouge&quot;&gt;FnOnce&lt;/code&gt; can be implemented.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=ca812f04fd250c760c5fbc328d9590fe&quot;&gt;Playground Link &lt;strong&gt;closure_5&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://play.rust-lang.org/?version=nightly&amp;amp;mode=debug&amp;amp;edition=2018&amp;amp;gist=ca812f04fd250c760c5fbc328d9590fe&quot;&gt;Playground Link &lt;strong&gt;closure_5&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">If you want to respond to this post, please respond via Rust users or Reddit.</summary></entry></feed>
+&lt;p&gt;Even though we didn’t add the &lt;code class=&quot;highlighter-rouge&quot;&gt;move&lt;/code&gt; qualifier to the closure we see that &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; was moved into the closure. This is because &lt;code class=&quot;highlighter-rouge&quot;&gt;Vec::into_iter&lt;/code&gt; takes &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; be value, which means &lt;code class=&quot;highlighter-rouge&quot;&gt;self&lt;/code&gt; will be moved into the function. Because of this, the Rust moves a into &lt;code class=&quot;highlighter-rouge&quot;&gt;__closure_5__&lt;/code&gt;. This means that &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; must be consumed during the function call, only &lt;code class=&quot;highlighter-rouge&quot;&gt;FnOnce&lt;/code&gt; can be implemented.&lt;/p&gt;</content><author><name></name></author><summary type="html">If you want to respond to this post, please respond via Rust users or Reddit.</summary></entry></feed>
