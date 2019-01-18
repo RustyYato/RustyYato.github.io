@@ -175,7 +175,7 @@ directly, you can use them like so</p>
 
 <p>You can use these playground links to test out the desugared code!</p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=d43d7b0894c41e78365413a56bcfb20d">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=d43d7b0894c41e78365413a56bcfb20d">Playground Link <strong>closure_0</strong></a></p>
 
 <hr />
 <p>Now one step up, lets capture a variable.</p>
@@ -210,7 +210,7 @@ directly, you can use them like so</p>
 
 <p>We still maintain <code class="highlighter-rouge">Clone</code> and <code class="highlighter-rouge">Copy</code> because shared references are <code class="highlighter-rouge">Copy</code>.</p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=c6e017ceb489566268b1f0fd28f8be04">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=c6e017ceb489566268b1f0fd28f8be04">Playground Link <strong>closure_1</strong></a></p>
 
 <hr />
 <p>Now, what about if I have a closure with arguments? What about <code class="highlighter-rouge">move</code> closures?</p>
@@ -248,7 +248,7 @@ directly, you can use them like so</p>
 
 <p>This is why when you do anything with threads, you need to use <code class="highlighter-rouge">move</code> closures. They eliminate many of the references that would otherwise be created.</p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=4ebcba27e4163605964645b1f553c5f2">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=4ebcba27e4163605964645b1f553c5f2">Playground Link <strong>closure_2</strong></a></p>
 
 <hr />
 <p>More on <code class="highlighter-rouge">move</code></p>
@@ -290,7 +290,7 @@ directly, you can use them like so</p>
 
 <p>Notice that even though we have a <code class="highlighter-rouge">move</code> closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be <code class="highlighter-rouge">'static</code>, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than <code class="highlighter-rouge">'static</code></p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=bdb0e9a398b07e3bead33b2ddf952edf">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=bdb0e9a398b07e3bead33b2ddf952edf">Playground Link <strong>closure_3</strong></a></p>
 
 <hr />
 <p>What about returning things from closures, and mutating the enviornment inside a closure.</p>
@@ -342,7 +342,7 @@ directly, you can use them like so</p>
 
 <p>We can now see why we need to dereference the references inside of <code class="highlighter-rouge">call*</code>. This is because we need the correct types for things to work out. For example, there is no impl of <code class="highlighter-rouge">AddAssign</code> for <code class="highlighter-rouge">&amp;mut u32</code>, but there is one for <code class="highlighter-rouge">u32</code>. So we need to dereference <code class="highlighter-rouge">self.counter</code> so that Rust can resolve <code class="highlighter-rouge">AddAssign</code> correctly. There is nothing special about <code class="highlighter-rouge">AddAssign</code>,  type inference requires that these types are dereferenced in order to work correctly.</p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=0fa923cb58ee9077b7788b37aa0ff372">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=0fa923cb58ee9077b7788b37aa0ff372">Playground Link <strong>closure_4</strong></a></p>
 
 <hr />
 <p>What about consuming things in a closure</p>
@@ -384,7 +384,7 @@ directly, you can use them like so</p>
 
 <p>Even though we didn’t add the <code class="highlighter-rouge">move</code> qualifier to the closure we see that <code class="highlighter-rouge">a</code> was moved into the closure. This is because <code class="highlighter-rouge">Vec::into_iter</code> takes <code class="highlighter-rouge">self</code> be value, which means <code class="highlighter-rouge">self</code> will be moved into the function. Because of this, the Rust moves a into <code class="highlighter-rouge">__closure_5__</code>. This means that <code class="highlighter-rouge">a</code> must be consumed during the function call, only <code class="highlighter-rouge">FnOnce</code> can be implemented.</p>
 
-<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=ca812f04fd250c760c5fbc328d9590fe">Playground Link</a></p>
+<p><a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=ca812f04fd250c760c5fbc328d9590fe">Playground Link <strong>closure_5</strong></a></p>
 
   </div><a class="u-url" href="/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html" hidden></a>
 </article>

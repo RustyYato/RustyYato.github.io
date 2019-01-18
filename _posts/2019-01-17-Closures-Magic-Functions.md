@@ -141,7 +141,7 @@ Then create the closure by creating this new struct. We call the closure by call
 
 You can use these playground links to test out the desugared code!
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=d43d7b0894c41e78365413a56bcfb20d)
+[Playground Link __closure_0__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=d43d7b0894c41e78365413a56bcfb20d)
 
 ---
 Now one step up, lets capture a variable.
@@ -178,7 +178,7 @@ Notice the lifetime parameter on `__closure_1__`, because it is borrowing from t
 
 We still maintain `Clone` and `Copy` because shared references are `Copy`.
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=c6e017ceb489566268b1f0fd28f8be04)
+[Playground Link __closure_1__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=c6e017ceb489566268b1f0fd28f8be04)
 
 ---
 Now, what about if I have a closure with arguments? What about `move` closures?
@@ -218,7 +218,7 @@ Finally, what did `move` do? Simply, instead of borrowing from the enviornment, 
 
 This is why when you do anything with threads, you need to use `move` closures. They eliminate many of the references that would otherwise be created.
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=4ebcba27e4163605964645b1f553c5f2)
+[Playground Link __closure_2__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=4ebcba27e4163605964645b1f553c5f2)
 
 ---
 More on `move`
@@ -262,7 +262,7 @@ Fn::call(&print_me, ());
 
 Notice that even though we have a `move` closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be `'static`, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than `'static` 
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=bdb0e9a398b07e3bead33b2ddf952edf)
+[Playground Link __closure_3__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=bdb0e9a398b07e3bead33b2ddf952edf)
 
 ---
 What about returning things from closures, and mutating the enviornment inside a closure.
@@ -316,7 +316,7 @@ We take a `&mut` to `counter` so that we can change it, and a `&` to delta to re
 
 We can now see why we need to dereference the references inside of `call*`. This is because we need the correct types for things to work out. For example, there is no impl of `AddAssign` for `&mut u32`, but there is one for `u32`. So we need to dereference `self.counter` so that Rust can resolve `AddAssign` correctly. There is nothing special about `AddAssign`,  type inference requires that these types are dereferenced in order to work correctly.
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=0fa923cb58ee9077b7788b37aa0ff372)
+[Playground Link __closure_4__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=0fa923cb58ee9077b7788b37aa0ff372)
 
 ---
 What about consuming things in a closure
@@ -360,4 +360,4 @@ println!("{}", FnOnce::call_once(transform, ()));
 
 Even though we didn't add the `move` qualifier to the closure we see that `a` was moved into the closure. This is because `Vec::into_iter` takes `self` be value, which means `self` will be moved into the function. Because of this, the Rust moves a into `__closure_5__`. This means that `a` must be consumed during the function call, only `FnOnce` can be implemented.
 
-[Playground Link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=ca812f04fd250c760c5fbc328d9590fe)
+[Playground Link __closure_5__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=ca812f04fd250c760c5fbc328d9590fe)
