@@ -10,7 +10,7 @@ If you want to respond to this post, please respond via [Rust users](https://use
 
 ---
 
-Closures seem like magical functions. They can do magic like capture their enviornment, which normal functions can't do.
+Closures seem like magical functions. They can do magic like capture their environment, which normal functions can't do.
 
 ```rust
 let hello_world = "Hello World!".to_string();
@@ -83,8 +83,8 @@ Finally is the functions
 These functions do the leg work of executing the closure. There are a few notable differences between each one.
 
 * In `FnOnce` we have `call_once`, which takes a `self` reciever. This is how it enforces that it is only called once. After self is moved into this function call, it can't be used again.
-* In `FnMut` we have `call_mut`, which takes a `&mut self` reciever. This allows changes to the enviornment in closures.
-* In `Fn` we have `call`, which takes a `&self` reciever. This doesn't allow chagnes to the enviornment (ignoring shared mutablility), but it does make it the most flexible type of closure. It can be called as many times as you want, and it can be thread-safe if `Send` and `Sync` are also implemented for the closure.
+* In `FnMut` we have `call_mut`, which takes a `&mut self` reciever. This allows changes to the environment in closures.
+* In `Fn` we have `call`, which takes a `&self` reciever. This doesn't allow chagnes to the environment (ignoring shared mutablility), but it does make it the most flexible type of closure. It can be called as many times as you want, and it can be thread-safe if `Send` and `Sync` are also implemented for the closure.
 
 ## Examples
 
@@ -175,7 +175,7 @@ Fn::call(&print_me, ());
 
 [Playground Link __closure_1__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=c6e017ceb489566268b1f0fd28f8be04)
 
-We now have a field on `__closure_1__`, this represents the enviornment that is being used. So when we go to implement the `Fn*` traits, we use these fields to get access to the enviornment. Whenever Rust accesses one of these fields, it first dereferences them, the reason why will become evident when we get to mutating closures.
+We now have a field on `__closure_1__`, this represents the environment that is being used. So when we go to implement the `Fn*` traits, we use these fields to get access to the environment. Whenever Rust accesses one of these fields, it first dereferences them, the reason why will become evident when we get to mutating closures.
 
 Notice the lifetime parameter on `__closure_1__`, because it is borrowing from the stack frame with `&message`, `print_me` has a non-`'static` lifetime. One downside to this is that it can't be sent across threads! Threads require a `'static` lifetime so that things don't deallocate while they run.
 
@@ -218,7 +218,7 @@ First, the types of the closure arguments are resolved via type inference.
 
 Next, how are arguments handled? As we saw earlier in the `Fn* Traits` section, arguments are really just a single tuple containing all of the arguments. This tuple is automatically created whenever we call a closure and destructured inside the `call*` function.
 
-Finally, what did `move` do? Simply, instead of borrowing from the enviornment, we are going to move everything from the enviornment into this new anonomous struct (`__closure_2__`). Now because `__closure_2__` doesn't contain any lifetimes, it has a `'static` lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost `Copy`, now our closure in only `Clone`. :(
+Finally, what did `move` do? Simply, instead of borrowing from the environment, we are going to move everything from the environment into this new anonomous struct (`__closure_2__`). Now because `__closure_2__` doesn't contain any lifetimes, it has a `'static` lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost `Copy`, now our closure in only `Clone`. :(
 
 This is why when you do anything with threads, you need to use `move` closures. They eliminate many of the references that would otherwise be created.
 
@@ -264,10 +264,10 @@ Fn::call(&print_me, ());
 
 [Playground Link __closure_3__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=bdb0e9a398b07e3bead33b2ddf952edf)
 
-Notice that even though we have a `move` closure, we still get lifetimes. This is because we have a reference from the enviornment. This means that unless that reference resolves to be `'static`, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than `'static` 
+Notice that even though we have a `move` closure, we still get lifetimes. This is because we have a reference from the environment. This means that unless that reference resolves to be `'static`, you cannot send it across threads. In this case the reference is definitely a shorter lifetime than `'static` 
 
 ---
-What about returning things from closures, and mutating the enviornment inside a closure.
+What about returning things from closures, and mutating the environment inside a closure.
 
 ```rust
 let mut counter: u32 = 0;
