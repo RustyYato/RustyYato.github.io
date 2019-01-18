@@ -131,6 +131,8 @@ let y = Fn::call(&x, ());
 
 [Playground Link __closure_0__](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=d43d7b0894c41e78365413a56bcfb20d)
 
+You can use these playground links to test out the desugared code!
+
 Now, there is quite a bit to unpack here. First we get this new type `__closure_0__`. We can also see that `Clone` and `Copy` are derived for `__closure_0__`. This is because it is an empty type so it is trivial to `Clone` and `Copy` an empty struct. This allows for more flexiblity when using the closure.
 
 Rust will pick the most specific `Fn*` trait to use whenever you call a function, in this order: `Fn`, `FnMut`, `FnOnce`. So in this case, because we can implement `Fn`, we implement that and all pre-requisites (`FnMut` and `FnOnce`). The function body from the closure is copied over to the function body of each of `call*` functions.
@@ -140,8 +142,6 @@ Then create the closure by creating this new struct. We call the closure by call
 *Note:* the names I give, `__closure_0__` are arbitrary and the names that are actually used are random. This makes closures unnameable.
 
 *Note:* How Rust knows which `Fn*` trait to derive for the closure is up to analysis of what it captures and how it is used (seen later).
-
-You can use these playground links to test out the desugared code!
 
 ---
 Now one step up, lets capture a variable.
