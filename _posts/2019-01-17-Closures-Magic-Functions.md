@@ -92,7 +92,7 @@ I believe that working by example is the best way to explain something.
 
 I will show the desugaring of a few closures, and explain why they are that way, and some benefits and costs to each closure.
 
-Note: I will not show how `Send` and `Sync` are impled, as that is out of scope. After the first desugaring, I will not show the impls for all three `Fn*` traits, only the most specific one. So if you see `Fn`, then assume `FnMut` and `FnOnce` are impled with the same function body. If you see `FnMut`, then assume that `FnOnce` is impled with the same function body, but `Fn` is *not* impled. If you see `FnOnce`, then assume that `Fn` and `FnMut `are *not* impled. I will also put `type Output` in a comment to show what it would be if I only impl `Fn` or `FnMut`.
+Note: I will not show how `Send` and `Sync` are impled, as that is out of scope. After the first desugaring, I will not show the impls for all three `Fn*` traits, only the most specific one. So if you see `Fn`, then assume `FnMut` and `FnOnce` are impled with the same function body. If you see `FnMut`, then assume that `FnOnce` is impled with the same function body, but `Fn` is *not* impled. If you see `FnOnce`, then assume that `Fn` and `FnMut` are *not* impled. I will also put `type Output` in a comment to show what it would be if I only impl `Fn` or `FnMut`.
 
 ---
 First, the simplest closure, one that doesn't capture anything, and only returns a unit.
@@ -316,9 +316,9 @@ assert_eq!(FnMut::call_mut(&mut next, ()), 6);
 
 Because we are changing counter inside of the closure, we can implement at most `FnMut`. This is because we don't have write access inside of `Fn`.
 
-We take a `&mut` to `counter` so that we can change it, and a `&` to delta to read from it. Each reference gets a fresh lifetime parameter.
+We take a `&mut` to `counter` so that we can change it, and a `&` to `delta` to read from it. Each reference gets a fresh lifetime parameter.
 
-We can now see why we need to dereference the references inside of `call*`. This is because we need the correct types for things to work out. For example, there is no impl of `AddAssign` for `&mut u32`, but there is one for `u32`. So we need to dereference `self.counter` so that Rust can resolve `AddAssign` correctly. There is nothing special about `AddAssign`,  type inference requires that these types are dereferenced in order to work correctly.
+We can now see why we need to dereference the references inside of `call*`. This is because we need the correct types for things to work out. For example, there is no impl of `AddAssign` for `&mut u32`, but there is one for `u32`. So we need to dereference `self.counter` so that Rust can resolve `AddAssign` correctly. There is nothing special about `AddAssign`, the type checker requires that these types are dereferenced in order to work correctly.
 
 ---
 What about consuming things in a closure
