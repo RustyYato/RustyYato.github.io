@@ -52,7 +52,7 @@ for example
 |a: f32, q: String| a; // this has Args = (f32, String)
 ```
 
-This is to get around needing varadict generics to handle every possible list of arguments.
+This is to get around needing variadic generics to handle every possible list of arguments.
 This representation is unstable, and may change in the future. So instead of using the `Fn*` traits
 directly, you can use them like so
 
@@ -82,9 +82,9 @@ Finally is the functions
 
 These functions do the leg work of executing the closure. There are a few notable differences between each one.
 
-* In `FnOnce` we have `call_once`, which takes a `self` reciever. This is how it enforces that it is only called once. After self is moved into this function call, it can't be used again.
-* In `FnMut` we have `call_mut`, which takes a `&mut self` reciever. This allows changes to the environment in closures.
-* In `Fn` we have `call`, which takes a `&self` reciever. This doesn't allow chagnes to the environment (ignoring shared mutablility), but it does make it the most flexible type of closure. It can be called as many times as you want, and it can be thread-safe if `Send` and `Sync` are also implemented for the closure.
+* In `FnOnce` we have `call_once`, which takes a `self` receiver. This is how it enforces that it is only called once. After self is moved into this function call, it can't be used again.
+* In `FnMut` we have `call_mut`, which takes a `&mut self` receiver. This allows changes to the environment in closures.
+* In `Fn` we have `call`, which takes a `&self` receiver. This doesn't allow changes to the environment (ignoring shared mutability), but it does make it the most flexible type of closure. It can be called as many times as you want, and it can be thread-safe if `Send` and `Sync` are also implemented for the closure.
 
 ## Examples
 
@@ -100,7 +100,7 @@ First, the simplest closure, one that doesn't capture anything, and only returns
 let x = || ();
 let y = x();
 ```
-gets desugarred to
+gets desugared to
 ```rust
 #[derive(Clone, Copy)]
 struct __closure_0__ {}
@@ -133,7 +133,7 @@ let y = Fn::call(&x, ());
 
 You can use these playground links to test out the desugared code!
 
-Now, there is quite a bit to unpack here. First we get this new type `__closure_0__`. We can also see that `Clone` and `Copy` are derived for `__closure_0__`. This is because it is an empty type so it is trivial to `Clone` and `Copy` an empty struct. This allows for more flexiblity when using the closure.
+Now, there is quite a bit to unpack here. First we get this new type `__closure_0__`. We can also see that `Clone` and `Copy` are derived for `__closure_0__`. This is because it is an empty type so it is trivial to `Clone` and `Copy` an empty struct. This allows for more flexibility when using the closure.
 
 Rust will pick the most specific `Fn*` trait to use whenever you call a function, in this order: `Fn`, `FnMut`, `FnOnce`. So in this case, because we can implement `Fn`, we implement that and all pre-requisites (`FnMut` and `FnOnce`). The function body from the closure is copied over to the function body of each of `call*` functions.
 
@@ -218,7 +218,7 @@ First, the types of the closure arguments are resolved via type inference.
 
 Next, how are arguments handled? As we saw earlier in the `Fn* Traits` section, arguments are really just a single tuple containing all of the arguments. This tuple is automatically created whenever we call a closure and destructured inside the `call*` function.
 
-Finally, what did `move` do? Simply, instead of borrowing from the environment, we are going to move everything from the environment into this new anonomous struct (`__closure_2__`). Now because `__closure_2__` doesn't contain any lifetimes, it has a `'static` lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost `Copy`, now our closure in only `Clone`. :(
+Finally, what did `move` do? Simply, instead of borrowing from the environment, we are going to move everything from the environment into this new anonymous struct (`__closure_2__`). Now because `__closure_2__` doesn't contain any lifetimes, it has a `'static` lifetime, which is necessary for it to be sent across threads! But in doing so, we also lost `Copy`, now our closure in only `Clone`. :(
 
 This is why when you do anything with threads, you need to use `move` closures. They eliminate many of the references that would otherwise be created.
 
