@@ -273,7 +273,7 @@ What about returning things from closures, and mutating the environment inside a
 let mut counter: u32 = 0;
 let delta: u32 = 2;
 
-let next = || {
+let mut next = || {
     counter += delta;
     counter
 };
