@@ -14,13 +14,13 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: Rusty Yato
-email: krishna.sd.2012@gmail.com
+email: rustyyato@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   A blog about the Rust Programming Language! Here we will delve
   into various parts of Rust and see how it works.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-github_username:  KrishnaSannasi
+github_username:  RustyYato
 
 # Build settings
 markdown: kramdown
