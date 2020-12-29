@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About
+title: About Me
 permalink: /about/
 ---
 
@@ -13,3 +13,12 @@ I am Krishna, and I am active on
 * [Reddit](https://www.reddit.com/user/YatoRust)
 
 These blog posts will be posted to the Rust Users Forum and Reddit whenever I make something new.
+
+I have created a number of crates including:
+ * [`rel-ptr`](https://github.com/RustyYato/rel-ptr) - Relative pointers in Rust, which can be used to soundly create one class of self-referenential types.
+ * [`vec-utils`](https://github.com/RustyYato/vec-utils) - Extra functions to effiencently covnert a `Vec<T>` to `Vec<U>`, reusing the memory where possible
+ * [`generic-field-projection`](https://github.com/RustyYato/generic-field-projection) - A prototype implementation for [RFC #2708](https://github.com/rust-lang/rfcs/pull/2708), which allows you overload the dot operator to get field access on arbitrary types.
+ * [`generic-vec`](https://github.com/RustyYato/generic-vec) – a `Vec` implementation that is generic over its storage strategy
+    * For example, it's possible to implement both a `Heap`-backed vector and an `Array` backed vector with this library, and use `Vec` without caring about how its data is stored
+ * [`type-families`](https://github.com/RustyYato/type-families) - An implementation of some popular type-classes from `Haskell` in stable `Rust`
+ * [`set_slice`](https://github.com/RustyYato/set_slice) - My first crate, some syntactic sugar to allow setting arbitrary sub-slices of a slice
