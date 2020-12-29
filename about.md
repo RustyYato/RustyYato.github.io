@@ -6,7 +6,7 @@ permalink: /about/
 
 This blog is about the Rust Programming Language. Here we will delve into the details of how Rust operates, how it desugars various constructs, and more! This blog will assume that you have read [The Rust Programming Language](https://doc.rust-lang.org/book/).
 
-I am Krishna, and I am active on
+I am `RustyYato`, and I am active on
 * [Rust Users](https://users.rust-lang.org/u/RustyYato/summary)
 * [Rust Internals](https://internals.rust-lang.org/u/RustyYato/summary)
 * [Github](https://github.com/RustyYato)
