@@ -19,11 +19,11 @@ I have created a number of crates including:
     * [`ptr-to-field`](https://github.com/RustyYato/ptr-to-field) was a precursor to `generic-field-projection`, and helped inform it's design decisions.
     * [`typsy`](https://github.com/RustyYato/typsy) - Type level list and enums which is used in the internals of `generic-field-projection`. This crate was heavily inspired by [`frunk`](https://crates.io/crates/frunk)
  * [`double-buffer`](https://github.com/RustyYato/double-buffer) - A reimplementation of [`left-right`](crates.io/crates/left-right) that has a few different design decisions, and serves as a lower level api to `left-right`
- * [`rel-ptr`](https://github.com/RustyYato/rel-ptr) - Relative pointers in Rust, which can be used to soundly create one class of self-referenential types.
- * [`vec-utils`](https://github.com/RustyYato/vec-utils) - Extra functions to effiencently covnert a `Vec<T>` to `Vec<U>`, reusing the memory where possible
  * [`generic-vec`](https://github.com/RustyYato/generic-vec) – a `Vec` implementation that is generic over its storage strategy
     * For example, it's possible to implement both a `Heap`-backed vector and an `Array` backed vector with this library, and use `Vec` without caring about how its data is stored
  * [`type-families`](https://github.com/RustyYato/type-families) - An implementation of some popular type-classes from `Haskell` in stable `Rust`
+ * [`rel-ptr`](https://github.com/RustyYato/rel-ptr) - Relative pointers in Rust, which can be used to soundly create one class of self-referenential types.
+ * [`vec-utils`](https://github.com/RustyYato/vec-utils) - Extra functions to effiencently covnert a `Vec<T>` to `Vec<U>`, reusing the memory where possible
  * [`set_slice`](https://github.com/RustyYato/published_crates/tree/master/set_slice) - My first crate, some syntactic sugar to allow setting arbitrary sub-slices of a slice
 
 I've also work on a number of open source projects, chief among them:
