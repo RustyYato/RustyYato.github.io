@@ -26,7 +26,7 @@ I have created a number of crates including:
 
 I've also work on a number of open source projects, chief among them:
 * Rust `std` library [`PR`](https://github.com/rust-lang/rust/pull/56796) - where I modified the blanket implementations on `From -> TryFrom` to `Into -> TryFrom`
-* MIRI deallocation hooks [`PR 1`](https://github.com/rust-lang/rust/pull/56796), [`PR 2`](https://github.com/rust-lang/rust/pull/70962) - where I added deallocation hooks to MIRI, which shows you when an allocation is deallcoated when it is tracked.
+* MIRI deallocation hooks [`PR 1`](https://github.com/rust-lang/miri/pull/1334), [`PR 2`](https://github.com/rust-lang/rust/pull/70962) - where I added deallocation hooks to MIRI, which shows you when an allocation is deallcoated when it is tracked.
 * Made [`once_cell`](https://github.com/matklad/once_cell) more flexible [`PR`](https://github.com/matklad/once_cell/pull/37) - Changed `once_cell::*::Lazy` to allow `FnOnce` closures instead of just `Fn` closures
    * `once_cell` is now in the process of getting merged into std, which is exciting
 * Exposed useful traits in [`packed_simd`](https://github.com/rust-lang/packed_simd) [`PR`](https://github.com/rust-lang/packed_simd/pull/259)
