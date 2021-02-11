@@ -24,9 +24,10 @@ github_username:  RustyYato
 
 # Build settings
 markdown: kramdown
-theme: jekyll-theme-minimal
+theme: jekyll-dash
 plugins:
   - jekyll-feed
+paginate: 10
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
