@@ -21,6 +21,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  RustyYato
+show_excerpts: true 
 
 # Build settings
 markdown: kramdown
@@ -29,6 +30,22 @@ remote_theme: bitbrain/jekyll-dash
 plugins:
   - jekyll-feed
 paginate: 10
+
+dash:
+  date_format: "%b %-d, %Y"
+  social_links:
+    - url: https://twitter.com/RustyYato
+      icon: twitter-square
+      color: yellow
+    - url: https://github.com/RustyYato
+      icon: github-square
+      color: yellow
+    - url: https://reddit.com/u/yatorust
+      icon: reddit-square
+      color: yellow
+    - url: ./about
+      icon: itch-io
+      color: yellow
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
