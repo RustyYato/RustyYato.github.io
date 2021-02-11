@@ -25,6 +25,7 @@ github_username:  RustyYato
 # Build settings
 markdown: kramdown
 theme: jekyll-dash
+remote_theme: bitbrain/jekyll-dash
 plugins:
   - jekyll-feed
 paginate: 10
