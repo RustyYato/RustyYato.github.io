@@ -44,7 +44,7 @@ dash:
       icon: reddit-square
       color: yellow
     - url: ./about
-      icon: itch-io
+      icon: odnoklassniki # sistrix
       color: yellow
 
 # Exclude from processing.
