@@ -43,7 +43,7 @@ dash:
     - url: https://reddit.com/u/yatorust
       icon: reddit-square
       color: yellow
-    - url: ./about
+    - url: https://rustyyato.github.io/about/
       icon: odnoklassniki # sistrix
       color: yellow
 
