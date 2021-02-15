@@ -7,16 +7,16 @@ categories: type system
 
 Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting for `GAT`? Well, this is the place to be.
 
-It's easiest to understand `HKT` by analogy, in programming we deal with values, these values have types. If you want to generalize over many different types of values, you use generics (or equivilent). But what if you want to generalize even further? What does that even mean?
+It's easiest to understand `HKT` by analogy, in programming we deal with values, these values have types. If you want to generalize over many different types of values, you use generics (or equivalent). But what if you want to generalize even further? What does that even mean?
 
-One way to generalize further is to generalize over type constructor. What's a type constructor? It's basically a function that makes a type. For example, in Rust `Vec` is a type constructor, it's a function from `Type -> Type`. If you apply a `i32` to it, then it's a `Vec<i32>` which is a `Type`. Of course in stable Rust you can't actually do anything with `Vec`, you have to specify a concrete type (`Vec<T>` is a concrete type, even if `T` is a generic paramter).
+One way to generalize further is to generalize over type constructor. What's a type constructor? It's basically a function that makes a type. For example, in Rust `Vec` is a type constructor, it's a function from `Type -> Type`. If you apply a `i32` to it, then it's a `Vec<i32>` which is a `Type`. Of course in stable Rust you can't actually do anything with `Vec`, you have to specify a concrete type (`Vec<T>` is a concrete type, even if `T` is a generic parameter).
 
 Let's dig a bit deeper. First let's setup some terminology, the actual name for these "functions" is `kind`. Let's list some `kind`s to get a feel for it:
 
 - `Vec` as we saw before is `Type -> Type`
     - in standard notation `* -> *`, where `*` means `Type`, but I will not be using standard notation, because Rust throws a wrench into it in just a little bit!
 - `Option<i32>` is a `Type`
-- `Result` is a `(Type, Type) -> Type`, or equivilently `Type -> Type -> Type`
+- `Result` is a `(Type, Type) -> Type`, or equivalently `Type -> Type -> Type`
 
 Rust adds in the extra complication of having not one, not two, but three different basic kinds:
 
@@ -85,7 +85,7 @@ This is quite a lot, so let's soak it in.
 Family<A> + Family<B>
 ```
 
-First, we require that our familes can be used with either type (this allows you to restrict the families in some ways, for example for `HashSet`, only allow `T: Hash + Eq`). `A` will be the input type, and `B` will be the output type.
+First, we require that our families can be used with either type (this allows you to restrict the families in some ways, for example for `HashSet`, only allow `T: Hash + Eq`). `A` will be the input type, and `B` will be the output type.
 
 ```rust
 fn map<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
@@ -93,7 +93,7 @@ where
     F: Fn(A) -> B + Copy;
 ```
 
-Next we have this monstrous function! This will be easier to expain if we have a concrete family.
+Next we have this monstrous function! This will be easier to explain if we have a concrete family.
 
 ```rust
 /// for `OptionFamily`
@@ -102,7 +102,7 @@ where
     F: Fn(A) -> B + Copy;
 ```
 
-So this is just the same as the ordinary map in `Option`, except it requries `Fn`, instead of `FnOnce`. We could generalize over `Fn` and `FnOnce` if Rust had associated traits, but alas we don't, so we'll have to make do with `Fn` (I'll leave it to you to figure out a nice way to abstract over `Fn`, `FnMut` and `FnOnce`). All we've done is generalize it to *any* family, not just `Option`.
+So this is just the same as the ordinary map in `Option`, except it requires `Fn`, instead of `FnOnce`. We could generalize over `Fn` and `FnOnce` if Rust had associated traits, but alas we don't, so we'll have to make do with `Fn` (I'll leave it to you to figure out a nice way to abstract over `Fn`, `FnMut` and `FnOnce`). All we've done is generalize it to *any* family, not just `Option`.
 
 The `Copy` bound is nice for things like `Vec` where you need to apply the function multiple times. You can convert any `Fn` to a `Fn + Copy` because `&_` implement `Fn` and are `Copy`.
 
