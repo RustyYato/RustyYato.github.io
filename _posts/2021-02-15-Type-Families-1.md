@@ -1,43 +1,30 @@
 ---
 layout: post
-title:  "Type Families Part 1 - AKA Higher Kinded Types in Rust"
-date:   2021-02-11 12:00:00 -0700
-categories: type system
+title:  "Generalizing over Generics in Rust (Part 1) - AKA Higher Kinded Types in Rust"
+date:   2021-02-15 12:00:00 -0000
+categories: type system,type families
 ---
 
 Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting for `GAT`? Well, this is the place to be.
 
-It's easiest to understand `HKT` by analogy, in programming we deal with values, these values have types. If you want to generalize over many different types of values, you use generics (or equivalent). But what if you want to generalize even further? What does that even mean?
+It's easiest to understand `HKT` by analogy. In programming we have values. If you want to generalize over many different values, you use types. If you want to generalize over many different types, you use polymorphism (generics/templates/dynamic dispatch). And it normally stops there, but what if you want to generalize over the kinds of polymorphism? Specifically, you want to generalize over all things `T<U>`, where we're generic over `T`. How to do that? That's where `HKT` comes in.
 
-One way to generalize further is to generalize over type constructor. What's a type constructor? It's basically a function that makes a type. For example, in Rust `Vec` is a type constructor, it's a function from `Type -> Type`. If you apply a `i32` to it, then it's a `Vec<i32>` which is a `Type`. Of course in stable Rust you can't actually do anything with `Vec`, you have to specify a concrete type (`Vec<T>` is a concrete type, even if `T` is a generic parameter).
+Let's introduce some terminology. Values like `0`, `true`, and `x` in `x: bool` are called `term`s. To generalize over `value`s we use `type`s, like `bool` in `x: bool` or `Vec<i32>` in `vec![0, 1, 2]: Vec<i32>`. To generalize over `type`s  we use `kind`s, like `Type` (aka `*` in formal literature) or `Term`. In Rust we even have a third kind, `Lifetime`!
 
-Let's dig a bit deeper. First let's setup some terminology, the actual name for these "functions" is `kind`. Let's list some `kind`s to get a feel for it:
+We can then reimagine generics are just functions in kinds. For example:
+* `Vec` (Not `Vec<T>`, but `Vec`) is just `Type -> Type`
+    * a function that takes a `Type` as argument, and produces a `Type`
+* `Result` is `Type -> Type -> Type` (a function that takes two `Type` arguments and produces a `Type`)
+* arrays are `Type -> usize -> Type`
+* references are `Lifetime -> Type -> Type`.
 
-- `Vec` as we saw before is `Type -> Type`
-    - in standard notation `* -> *`, where `*` means `Type`, but I will not be using standard notation, because Rust throws a wrench into it in just a little bit!
-- `Option<i32>` is a `Type`
-- `Result` is a `(Type, Type) -> Type`, or equivalently `Type -> Type -> Type`
+With this notion of `kind`s we are now well equipped to generalize over generics. Just one cinch, we `Rust` doesn't know about `kind`s! So how do we generalize over generics if we can't even express the fundamental building blocks!
 
-Rust adds in the extra complication of having not one, not two, but three different basic kinds:
+# Type Families
 
-- `Type` - these are your normal types, like `i32`, `Vec<i32>`, or `()`
-- `Lifetime` - these are lifetime parameters (`'a`), `'static`, or the inferred lifetimes
-- `Term` - These are `const-generic` parameters, `const X: usize` is a `Term`
+The key insight is that we can represent `kind`s as a system of types and traits. For example, here's how to handle `Type -> Type` kinds.
 
-This means that `Rust` can have a whole host of different kinds, like `Lifetime -> Type -> Type` (references) or `Type -> Term -> Type` (arrays).
-
-So what if you wanted to generalize over type constructors, for example over all kinds `Type -> Type` (like `Vec` or `Option`), how would you do that? In languages that support `HKT`, like Haskell, it's as simple as
-
-```haskell
-functor_map :: (a -> b) -> m a -> m b
-functor_map = fmap
-```
-
-But stable Rust doesn't support `HKT`, then how do we fullfil the promise at the top? And how does `GAT` fit in?
-
-# Stable Type Families
-
-The key insight is that we can represent `Vec`, `Option`, and `Result` as types, and kinds as traits. Here, I will only specify `Type -> Type` kinds, but this approach can be generalized to all kinds.
+Note: I'll show how `Option` fits in, and introduce `Result<_, E>`, but I'll leave the implementation of `Vec` to you. It's an interesting puzzle if you are inclined
 
 ```rust
 // `Option` has the kind `Type -> Type`
@@ -48,16 +35,23 @@ struct ResultFamily<E>(PhantomData<E>);
 
 // I'll leave the implementation of `VecFamily` to you
 
+// This trait represents the `kind` `Type -> Type`
 pub trait Family<A> {
+    // This represents the output of the function `Type -> Type`
+    // for a specific argument `A`.
     type This;
 }
 
 impl<A> Family<A> for OptionFamily {
+    // `OptionFamily` represents `Type -> Type`,
+    // so filling in the first argument means
+    // `Option<A>`
     type This = Option<A>;
 }
 
 impl<A, E> Family<A> for ResultFamily<E> {
-    // note how all results in this family have `E` as the error type 
+    // note how all results in this family have `E` as the error type
+    // This is similar to how currying works in functional languages
     type This = Result<A, E>;
 }
 ```
@@ -69,7 +63,7 @@ Let's also introduce a type alias for ease of use.
 pub type This<T, A> = <T as Family<A>>::This;
 ```
 
-Now we can replace all usage of `Option`, `Result<_, E>` with `OptionFamily` or `ResultFamily<E>`! From this we can build up abstractions that "require" HKT. Let's start with the simplest abstraction `Functor`. This is just any `Type -> Type` that has a notion of mapping a value. Generally `Functor` represents a collection, but it can do much more than that.
+Now we can replace all usage of `Option`, `Result<_, E>` with `OptionFamily` or `ResultFamily<E>`! From this we can build up abstractions that "require" HKT. Let's start with the simplest abstraction `Functor`. This is just any `Type -> Type` that has a notion of mapping a value. Generally `Functor` represents a collection, but it can do much more than that (But I won't dive into `Functor` in particular in this post).
 
 ```rust
 trait Functor<A, B>: Family<A> + Family<B> {
@@ -79,7 +73,7 @@ trait Functor<A, B>: Family<A> + Family<B> {
 }
 ```
 
-This is quite a lot, so let's soak it in. 
+This is quite a lot, so let's soak it in.
 
 ```rust
 Family<A> + Family<B>
@@ -165,4 +159,4 @@ trait<A, B> Monad<A, B> for OptionFamily {
 // try out `VecFamily`, it doesn't need to be optimal, it just needs to work!
 ```
 
-In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. Hopefully we can solve this on nightly, find out next time ... 
+In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `Family<A> + Family<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out next time ... 
