@@ -3,3 +3,5 @@
 .jekyll-cache
 *.lock
 _site
+serve
+*.log
