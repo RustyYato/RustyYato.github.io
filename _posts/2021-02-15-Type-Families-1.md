@@ -18,7 +18,7 @@ We can then reimagine generics are just functions in kinds. For example:
 * arrays are `Type -> usize -> Type`
 * references are `Lifetime -> Type -> Type`.
 
-With this notion of `kind`s we are now well equipped to generalize over generics. Just one cinch, we `Rust` doesn't know about `kind`s! So how do we generalize over generics if we can't even express the fundamental building blocks!
+With this notion of `kind`s we are now well equipped to generalize over generics. Just one cinch, we `Rust` doesn't know about `kind`s! So how do we generalize over generics if we can't even express the fundamental building blocks.
 
 # Type Families
 
