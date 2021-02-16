@@ -160,3 +160,7 @@ trait<A, B> Monad<A, B> for OptionFamily {
 ```
 
 In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `Family<A> + Family<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out next time ... 
+
+If you can't wait and must know more, check out [`type-families`](https://github.com/rustyyato/type-families), an experimental crate that implements the ideas outlined in this blog post.
+
+You can discuss this on reddit [here](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/) or the users.rust-lang.org [here](https://users.rust-lang.org/t/generalizing-over-generics-in-rust-part-1-aka-higher-kinded-types-in-rust/55716/2)
