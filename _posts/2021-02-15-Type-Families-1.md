@@ -14,7 +14,9 @@ Let's introduce some terminology. Values like `0`, `true`, and `x` in `x: bool` 
 We can then reimagine generics are just functions in kinds. For example:
 * `Vec` (Not `Vec<T>`, but `Vec`) is just `Type -> Type`
     * a function that takes a `Type` as argument, and produces a `Type`
-* `Result` is `Type -> Type -> Type` (a function that takes two `Type` arguments and produces a `Type`)
+* `Result` is `Type -> Type -> Type`
+    * a function that takes two `Type` arguments and produces a `Type`
+    * Note: this is equivalent to `Type, Type -> Type` (you can always transform a function that take a tuple of arguments into one that takes multiple arguments, and vice versa)
 * arrays are `Type -> usize -> Type`
 * references are `Lifetime -> Type -> Type`.
 
