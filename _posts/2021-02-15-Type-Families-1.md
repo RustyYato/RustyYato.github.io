@@ -7,18 +7,50 @@ categories: type system,type families
 
 Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting for `GAT`? Well, this is the place to be.
 
-It's easiest to understand `HKT` by analogy. In programming we have values. If you want to generalize over many different values, you use types. If you want to generalize over many different types, you use polymorphism (generics/templates/dynamic dispatch). And it normally stops there, but what if you want to generalize over the kinds of polymorphism? Specifically, you want to generalize over all things `T<U>`, where we're generic over `T`. How to do that? That's where `HKT` comes in.
+It's easiest to understand `HKT` by analogy. In programming we have many different tiers of abstractions. Starting at the bottom we have `term`s (aka values) like `0`, `true`, `"hello world!"`. If we want to work with a lot of `term`s that share a property, we use `type`s. For example, if we want to work with ...
 
-Let's introduce some terminology. Values like `0`, `true`, and `x` in `x: bool` are called `term`s. To generalize over `term`s we use `type`s, like `bool` in `x: bool` or `Vec<i32>` in `vec![0, 1, 2]: Vec<i32>`. To generalize over `type`s  we use `kind`s, like `Type` (aka `*` in formal literature) or `Term`. In Rust we even have a third `kind`, `Lifetime`!
+* 32-bit integer, we use `i32`
+* utf-8 strings, we use `&str` or `String`
 
-We can then reimagine generics are just functions in `kind`s. For example:
-* `Vec` (Not `Vec<T>`, but `Vec`) is just `Type -> Type`
-    * a function that takes a `Type` as argument, and produces a `Type`
-* `Result` is `Type -> Type -> Type`
-    * a function that takes two `Type` arguments and produces a `Type`
-    * Note: this is equivalent to `Type, Type -> Type` (you can always transform a function that take a tuple of arguments into one that takes multiple arguments, and vice versa)
-* arrays are `Type -> usize -> Type`
-* references are `Lifetime -> Type -> Type`.
+We generally use snake case to refer to `term`s generically like `x`, `im_an_integer`, and `database_connection`. We use functions to operate on these generic values.
+
+```rust
+fn add_one(
+    // a generic 32-bit integer
+    x: i32
+) -> i32 { x + 1 }
+```
+
+Moving up the abstraction tiers, we come to `type`s. For example: `String`, `i32`, or `bool`. If we want to work with a lot of `type`s that share a property, we use `trait`s and generics. For example, if we want to work with ...
+
+* types that can be debug printed, we use `std::fmt::Debug`
+* types that can be iterated, we use `Iterator`
+
+We generally use pascal case to refer to `types`s generically like `T`, `Self`, and `This`. We use generic functions to work with these generic types.
+
+```rust
+fn print<T: Debug>(x: T) {
+    println!("{:?}", x);
+}
+```
+
+Moving up the abstraction tiers again, we come to `kind`s. For example: `Option`, `Result`, or `Vec`. Wait what. Let's take a step back. Before I mentioned that `String`, `i32`, and `bool` are types. We also have more types that we can use, generic types like `Option<i32>` or `Result<String, String>`. What if you want to generalize over these types? Something of the form `T<U>`. That's where we get to kinds. For example:
+
+* `i32` has the kind `Type`
+* `Option<i32>` has the kind `Type`
+* `'a` has the kind `Lifetime`
+* `Option` has the kind `Type -> Type`
+    * W H A T, let's stop and explain what's going on here
+
+Generic types can be represented as a function from kinds to kinds. For example, `Option` is a function that takes a `Type` and produces a `Type` (hence `Type -> Type`). Let's see some more examples:
+
+* `Result` has the kind `Type -> Type -> Type`
+    * I'll use this notation because that's how it's done in the literature
+    * Note: this is equivalent to `(Type, Type) -> Type` (you can always transform a function that take a tuple of arguments into one that takes multiple arguments, and vice versa)
+* references have a kind `Lifetime -> Type -> Type`
+    * `&'a T`, one lifetime and one type parameter :)
+* arrays have the kind `Type -> usize -> Type`
+    * `[T; len]`, one type and one `usize` `term` (getting close to dependent types, something we won't touch in this post)
 
 With this notion of `kind`s we are now well equipped to generalize over generics. Just one cinch, `Rust` doesn't know about `kind`s! So how do we generalize over generics if we can't even express the fundamental building blocks.
 
@@ -29,7 +61,8 @@ The key insight is that we can represent `kind`s as a system of types and traits
 Note: I'll show how `Option` fits in, and introduce `Result<_, E>`, but I'll leave the implementation of `Vec` to you. It's an interesting puzzle if you are inclined
 
 ```rust
-// `Option` has the kind `Type -> Type`
+// `Option` has the kind `Type -> Type`,
+// we'll represent it with `OptionFamily`
 struct OptionFamily;
 // `Result` has the kind `Type -> Type -> Type`,
 // so we fill in one of the types with a concrete one
@@ -166,3 +199,7 @@ In this way you can implement most, if not all `HKT` abstractions in stable Rust
 If you can't wait and must know more, check out [`type-families`](https://github.com/rustyyato/type-families), an experimental crate that implements the ideas outlined in this blog post.
 
 You can discuss this on reddit [here](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/) or the users.rust-lang.org [here](https://users.rust-lang.org/t/generalizing-over-generics-in-rust-part-1-aka-higher-kinded-types-in-rust/55716/2)
+
+Credits:
+
+Thanks /u/IshKebab for helping me reword the introduction to make things more clear
