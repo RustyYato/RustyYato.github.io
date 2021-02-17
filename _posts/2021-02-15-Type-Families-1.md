@@ -113,7 +113,7 @@ trait Functor<A, B>: Family<A> + Family<B> {
 `Functor` just specifies a mapping operation. We can implement this rather easily.
 
 ```rust
-trait<A, B> Functor<A, B> for OptionFamily {
+impl<A, B> Functor<A, B> for OptionFamily {
     fn map<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
     where
         F: Fn(A) -> B + Copy {
@@ -125,7 +125,7 @@ trait<A, B> Functor<A, B> for OptionFamily {
 // try out `VecFamily`, it doesn't need to be optimal, it just needs to work!
 ```
 
-Ok, but that's boring, I hear you say. What about `Monad`? Typically it's defined by it's `bind` operation (We'll skip `Applicative` here, try it our yourself!). I'm not going to explain how `Monad` works, or why you would want it, just how to implement it.
+Ok, but that's boring, I hear you say. What about `Monad`? Typically it's defined by it's `bind` operation (We'll skip `Applicative` here, try it out yourself!). I'm not going to explain how `Monad` works, or why you would want it, just how to implement it.
 
 ```rust
 trait Monad<A, B>: Functor<A, B> {
@@ -147,7 +147,7 @@ where
 This looks very familiar, ... where have I seen this before? `Option::and_then` is that you?
 
 ```rust
-trait<A, B> Monad<A, B> for OptionFamily {
+impl<A, B> Monad<A, B> for OptionFamily {
     fn bind<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
     where
         F: Fn(A) -> This<Self, B> + Copy {
