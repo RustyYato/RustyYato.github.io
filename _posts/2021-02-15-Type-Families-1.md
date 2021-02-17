@@ -9,9 +9,9 @@ Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting
 
 It's easiest to understand `HKT` by analogy. In programming we have values. If you want to generalize over many different values, you use types. If you want to generalize over many different types, you use polymorphism (generics/templates/dynamic dispatch). And it normally stops there, but what if you want to generalize over the kinds of polymorphism? Specifically, you want to generalize over all things `T<U>`, where we're generic over `T`. How to do that? That's where `HKT` comes in.
 
-Let's introduce some terminology. Values like `0`, `true`, and `x` in `x: bool` are called `term`s. To generalize over `value`s we use `type`s, like `bool` in `x: bool` or `Vec<i32>` in `vec![0, 1, 2]: Vec<i32>`. To generalize over `type`s  we use `kind`s, like `Type` (aka `*` in formal literature) or `Term`. In Rust we even have a third kind, `Lifetime`!
+Let's introduce some terminology. Values like `0`, `true`, and `x` in `x: bool` are called `term`s. To generalize over `term`s we use `type`s, like `bool` in `x: bool` or `Vec<i32>` in `vec![0, 1, 2]: Vec<i32>`. To generalize over `type`s  we use `kind`s, like `Type` (aka `*` in formal literature) or `Term`. In Rust we even have a third `kind`, `Lifetime`!
 
-We can then reimagine generics are just functions in kinds. For example:
+We can then reimagine generics are just functions in `kind`s. For example:
 * `Vec` (Not `Vec<T>`, but `Vec`) is just `Type -> Type`
     * a function that takes a `Type` as argument, and produces a `Type`
 * `Result` is `Type -> Type -> Type`
