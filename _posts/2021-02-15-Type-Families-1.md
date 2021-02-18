@@ -204,4 +204,5 @@ You can discuss this on reddit [here](https://www.reddit.com/r/rust/comments/ll9
 
 Credits:
 
+Thanks /u/CalligrapherMinute77 for requesting this post
 Thanks /u/IshKebab for helping me reword the introduction to make things more clear
