@@ -71,20 +71,20 @@ struct ResultFamily<E>(PhantomData<E>);
 // I'll leave the implementation of `VecFamily` to you
 
 // This trait represents the `kind` `Type -> Type`
-pub trait Family<A> {
+pub trait OneTypeParam<A> {
     // This represents the output of the function `Type -> Type`
     // for a specific argument `A`.
     type This;
 }
 
-impl<A> Family<A> for OptionFamily {
+impl<A> OneTypeParam<A> for OptionFamily {
     // `OptionFamily` represents `Type -> Type`,
     // so filling in the first argument means
     // `Option<A>`
     type This = Option<A>;
 }
 
-impl<A, E> Family<A> for ResultFamily<E> {
+impl<A, E> OneTypeParam<A> for ResultFamily<E> {
     // note how all results in this family have `E` as the error type
     // This is similar to how currying works in functional languages
     type This = Result<A, E>;
@@ -95,13 +95,13 @@ Let's also introduce a type alias for ease of use.
 
 ```rust
 // Option<A> == This<OptionFamily, A>
-pub type This<T, A> = <T as Family<A>>::This;
+pub type This<T, A> = <T as OneTypeParam<A>>::This;
 ```
 
 Now we can replace all usage of `Option`, `Result<_, E>` with `OptionFamily` or `ResultFamily<E>`! From this we can build up abstractions that "require" HKT. Let's start with the simplest abstraction `Functor`. This is just any `Type -> Type` that has a notion of mapping a value. Generally `Functor` represents a collection, but it can do much more than that (But I won't dive into `Functor` in particular in this post).
 
 ```rust
-trait Functor<A, B>: Family<A> + Family<B> {
+trait Functor<A, B>: OneTypeParam<A> + OneTypeParam<B> {
     fn map<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
     where
         F: Fn(A) -> B + Copy;
@@ -111,10 +111,10 @@ trait Functor<A, B>: Family<A> + Family<B> {
 This is quite a lot, so let's soak it in.
 
 ```rust
-Family<A> + Family<B>
+OneTypeParam<A> + OneTypeParam<B>
 ```
 
-First, we require that our families can be used with either type (this allows you to restrict the families in some ways, for example for `HashSet`, only allow `T: Hash + Eq`). `A` will be the input type, and `B` will be the output type.
+First, we require that our families can be used with either type. This allows you to restrict the families in some ways, for example for `HashSet`, only allow `T: Hash + Eq`. `A` will be the input type, and `B` will be the output type.
 
 ```rust
 fn map<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
@@ -138,7 +138,7 @@ The `Copy` bound is nice for things like `Vec` where you need to apply the funct
 So all together again:
 
 ```rust
-trait Functor<A, B>: Family<A> + Family<B> {
+trait Functor<A, B>: OneTypeParam<A> + OneTypeParam<B> {
     fn map<F>(self, this: This<Self, A>, f: F) -> This<Self, B>
     where
         F: Fn(A) -> B + Copy;
@@ -194,7 +194,7 @@ impl<A, B> Monad<A, B> for OptionFamily {
 // try out `VecFamily`, it doesn't need to be optimal, it just needs to work!
 ```
 
-In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `Family<A> + Family<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out next time ... 
+In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `OneTypeParam<A> + OneTypeParam<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out next time ... 
 
 If you can't wait and must know more, check out [`type-families`](https://github.com/rustyyato/type-families), an experimental crate that implements the ideas outlined in this blog post.
 
