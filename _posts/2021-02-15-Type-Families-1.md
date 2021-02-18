@@ -91,6 +91,8 @@ impl<A, E> OneTypeParam<A> for ResultFamily<E> {
 }
 ```
 
+Note how a `trait` can act as a function over types, so you can encode the idea `Type -> Type` using a trait!
+
 Let's also introduce a type alias for ease of use. 
 
 ```rust
