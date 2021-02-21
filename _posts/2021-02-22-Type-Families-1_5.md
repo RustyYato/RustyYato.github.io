@@ -1,17 +1,17 @@
 ---
 layout: post
 title:  "Generalizing over Generics in Rust (Part 1.5): Mechanisms"
-date:   2021-02-15 12:00:00 -0000
+date:   2021-02-22 12:00:00 -0000
 categories: type system,type families
 ---
 
 Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting for `GAT`? Well, this is the place to be.
 
-This is part 1.5 in a series about emulating Higher Kinded Types in Rust, I'd encourage you to read [Part 1](../15/Type-Families-1.html) for background before reading this.
+This is part 1.5 in a series about emulating Higher Kinded Types in Rust, I'd encourage you to read [Part 1]({% post_url 2021-02-15-Type-Families-1 %}) for background before reading this.
 
 I'd like to give credit where credit is due. I first heard of the idea of type families from nikomatsakis' blogs on [type families](https://smallcultfollowing.com/babysteps/blog/2016/11/03/associated-type-constructors-part-2-family-traits/) and [higher kinded types](https://smallcultfollowing.com/babysteps/blog/2016/11/04/associated-type-constructors-part-3-what-higher-kinded-types-might-look-like/) from back when GATs was called ATCs. In the comments of Part 1, /u/LPTK shared some literature on this topic from OCaml: [Lightweight Higher Kinded Polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf), what we are doing is called type-level defunctionalisation[<sup>1</sup>](#note_1){: #note_1_back } ([comment link](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/gnxuz0y?utm_source=share&utm_medium=web2x&context=3)). /u/Krautoni also shared that [Arrow-KT](https://arrow-kt.io/) also uses defunctionalisation to implement `HKT` atop Kotlin's type system and GHC uses defunctionalisation to lower ~~redacted~~[<sup>2</sup>](#note_2){: #note_2_back } to GHC core. All of these are very interesting, and are definitely worth reading.
 
-In [Part 1](../15/Type-Families-1.html) I introduced the idea of type families, but without much explanation about *why* they worked, let's dig in now!
+In [Part 1]({% post_url 2021-02-15-Type-Families-1 %}) I introduced the idea of type families, but without much explanation about *why* they worked, let's dig in now!
 
 ```rust
 // `Option` has the kind `Type -> Type`,
@@ -49,7 +49,7 @@ Where we use a zero-sized type as a token for some idea. This is actually a comm
 fn foo() {}
 ```
 
-`foo` is a zero-sized value that has a unique type (In errors it's shown as `fn() {foo}`). Note this *isn't* `fn()`, a function pointer, but some anonymous zero-sized type. Closures are implemented in [a similar way](/rust/syntactic/sugar/2019/01/17/Closures-Magic-Functions.html). This allows Rust to minimize the size of objects, and more easily optimize away function and closures calls (For example, in iterator chains). We can also use this idea of zero sized tokens to represent some global resource, for example a [`Global`](https://doc.rust-lang.org/alloc/alloc/struct.Global.html) allocator.
+`foo` is a zero-sized value that has a unique type (In errors it's shown as `fn() {foo}`). Note this *isn't* `fn()`, a function pointer, but some anonymous zero-sized type. Closures are implemented in [a similar way]({% post_url 2019-01-17-Closures-Magic-Functions %}). This allows Rust to minimize the size of objects, and more easily optimize away function and closures calls (For example, in iterator chains). We can also use this idea of zero sized tokens to represent some global resource, for example a [`Global`](https://doc.rust-lang.org/alloc/alloc/struct.Global.html) allocator.
 
 Using `rustc`'s notation, `OptionFamily` is being used to represent the idea of `fn(Type) -> Type {Option}`. A function that takes a `Type` and returns the a `Type` (Which happens to be `Option<InputType>`).
 
