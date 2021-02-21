@@ -196,7 +196,7 @@ impl<A, B> Monad<A, B> for OptionFamily {
 // try out `VecFamily`, it doesn't need to be optimal, it just needs to work!
 ```
 
-In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `OneTypeParam<A> + OneTypeParam<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out next time ... 
+In this way you can implement most, if not all `HKT` abstractions in stable Rust. However the ergonomics of these abstractions are downright abysmal. Bounds, bounds, bounds *everywhere*. We saw this a little in `Functor<A, B>`, we needed `OneTypeParam<A> + OneTypeParam<B>` (why does family need to be repeated!). Hopefully we can solve this on nightly, find out in Part 2! Before we get there though, I need to explain why this transformation works in more detail, which will be the subject of [Part 1.5](../15/Type-Families-1_5.html) ... 
 
 If you can't wait and must know more, check out [`type-families`](https://github.com/rustyyato/type-families), an experimental crate that implements the ideas outlined in this blog post.
 

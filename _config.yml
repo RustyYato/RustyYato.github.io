@@ -20,15 +20,17 @@ description: >- # this means to ignore newlines until "baseurl:"
   into various parts of Rust and see how it works.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
+assets: "_assets"
 github_username:  RustyYato
-show_excerpts: true 
+show_excerpts: true
 
 # Build settings
 markdown: kramdown
-theme: jekyll-dash
-remote_theme: bitbrain/jekyll-dash
+theme: minima
+# remote_theme: bitbrain/jekyll-dash
 plugins:
   - jekyll-feed
+  - jekyll-paginate
 paginate: 10
 
 dash:
