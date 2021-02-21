@@ -22,6 +22,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 assets: "_assets"
 github_username:  RustyYato
+twitter_username: RustyYato
 show_excerpts: true
 
 # Build settings
@@ -32,22 +33,6 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
 paginate: 10
-
-dash:
-  date_format: "%b %-d, %Y"
-  social_links:
-    - url: https://twitter.com/RustyYato
-      icon: twitter-square
-      color: yellow
-    - url: https://github.com/RustyYato
-      icon: github-square
-      color: yellow
-    - url: https://reddit.com/u/yatorust
-      icon: reddit-square
-      color: yellow
-    - url: https://rustyyato.github.io/about/
-      icon: odnoklassniki # sistrix
-      color: yellow
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

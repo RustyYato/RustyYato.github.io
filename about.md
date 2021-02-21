@@ -8,7 +8,7 @@ I work on open source crates and am active on
 * [Rust Users](https://users.rust-lang.org/u/RustyYato/summary)
 * [Rust Internals](https://internals.rust-lang.org/u/RustyYato/summary)
 * [Github](https://github.com/RustyYato)
-* [Reddit](https://www.reddit.com/user/YatoRust)
+* [Reddit](https://www.reddit.com/user/YatoRust) (/u/YatoRust instead of RustyYato, :P)
 
 This blog is about the Rust Programming Language. Here we will delve into the details of how Rust operates, how it desugars various constructs, and more!
 
@@ -16,12 +16,12 @@ I have created a number of crates including:
  * [`generic-field-projection`](https://github.com/RustyYato/generic-field-projection) - A prototype implementation for [RFC #2708](https://github.com/rust-lang/rfcs/pull/2708), which allows you overload the dot operator to get field access on arbitrary types.
     * [`ptr-to-field`](https://github.com/RustyYato/ptr-to-field) was a precursor to `generic-field-projection` and helped inform it's design decisions.
     * [`typsy`](https://github.com/RustyYato/typsy) - Type level list and enums which is used in the internals of `generic-field-projection`. This crate was heavily inspired by [`frunk`](https://crates.io/crates/frunk)
- * [`double-buffer`](https://github.com/RustyYato/double-buffer) - A reimplementation of [`left-right`](crates.io/crates/left-right) that has a few different design decisions and serves as a lower level api to `left-right`
+ * [`double-buffer`](https://github.com/RustyYato/double-buffer) - A re-implementation of [`left-right`](crates.io/crates/left-right) that has a few different design decisions and serves as a lower level api to `left-right`
  * [`generic-vec`](https://github.com/RustyYato/generic-vec) – a `Vec` implementation that is generic over its storage strategy
     * For example, it's possible to implement both a heap-backed vector and an array backed vector with this library and use `GenericVec` without caring about how its data is stored
  * [`type-families`](https://github.com/RustyYato/type-families) - An implementation of a few popular type-classes from Haskell in stable Rust
- * [`rel-ptr`](https://github.com/RustyYato/rel-ptr) - Relative pointers in Rust, which can be used to soundly create one class of self-referenential types.
- * [`vec-utils`](https://github.com/RustyYato/vec-utils) - Extra functions to effiencently covnert a `Vec<T>` to `Vec<U>`, reusing the memory where possible
+ * [`rel-ptr`](https://github.com/RustyYato/rel-ptr) - Relative pointers in Rust, which can be used to soundly create one class of self-referential types.
+ * [`vec-utils`](https://github.com/RustyYato/vec-utils) - Extra functions to efficiently covnert a `Vec<T>` to `Vec<U>`, reusing the memory where possible
  * [`set_slice`](https://github.com/RustyYato/published_crates/tree/master/set_slice) - My first crate, some syntactic sugar to allow setting arbitrary sub-slices of a slice
 
 I've also work on a number of open source projects, chief among them:
