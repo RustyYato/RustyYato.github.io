@@ -163,9 +163,7 @@ fn curry_result(
 Of course we could curry the other parameter instead, like so:
 
 ```rust
-// Note: in actual code you may want to use `fn() -> E`,
-// to side-step drop check, but that's not too important for us
-struct ResultFamily<E>(PhantomData<E>);
+struct ResultFamily<T>(PhantomData<T>);
 
 impl<T, E> OneTypeParam<E> for ResultFamily<T> {
     type This = Result<T, E>;
@@ -194,6 +192,12 @@ where
 {
     move |a| f(a).bind(g)
 }
+
+let plus_one_times_two = compose_monad(
+    OptionFamily,
+    |x: u32| x.checked_add(1),
+    |x: u32| x.checked_mul(2)
+);
 ```
 
 First: of course this doesn't compile. It's not even valid Rust syntax. But this is what HKT could look like in Rust. Second: Lots of type parameters! Let's see what they all mean:
@@ -220,26 +224,15 @@ where
 {
     move |a| f(a).bind(monad, g)
 }
+
+let plus_one_times_two = compose_monad(
+    OptionFamily,
+    |x: u32| x.checked_add(1),
+    |x: u32| x.checked_mul(2)
+);
 ```
 
-Notice how we needed to declare `Monad` twice. This is unsatisfactory. It would be nice if we could just say the following and be on our way.
-
-```rust
-fn compose_monad<M, F, G, A, B, C>(
-    monad: M,
-    f: F,
-    g: G
-) -> impl FnOnce(A) -> This<M, C>
-where
-    M: Monad,
-    F: FnOnce(A) -> This<M, B>,
-    G: FnOnce(B) -> This<M, C>,
-{
-    move |a| f(a).bind(g)
-}
-```
-
-Granted this is a small case, but even for such a minor function there is a lot of annotation. This annotation burden only gets worse as complexity increases.
+Notice how we needed to declare `Monad` twice. This doesn't scale well as complexity increases.
 
 # Next Time
 
