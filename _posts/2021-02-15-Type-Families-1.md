@@ -99,6 +99,7 @@ Let's also introduce a type alias for ease of use.
 // Option<A> == This<OptionFamily, A>
 pub type This<T, A> = <T as OneTypeParam<A>>::This;
 ```
+{: #this_alias_definition }
 
 Now we can replace all usage of `Option`, `Result<_, E>` with `OptionFamily` or `ResultFamily<E>`! From this we can build up abstractions that "require" HKT. Let's start with the simplest abstraction `Functor`. This is just any `Type -> Type` that has a notion of mapping a value. Generally `Functor` represents a collection, but it can do much more than that (But I won't dive into `Functor` in particular in this post).
 
@@ -171,6 +172,7 @@ trait Monad<A, B>: Functor<A, B> {
         F: Fn(A) -> This<Self, B> + Copy;
 }
 ```
+{: #monad_definition }
 
 Looks the same as `Functor` to me! ... Wait, the bound on `F` looks funky. Let's dig in to the `OptionFamily` implementation again, maybe that will clear things up.
 

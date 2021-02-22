@@ -160,9 +160,86 @@ fn curry_result(
 }
 ```
 
+Of course we could curry the other parameter instead, like so:
+
+```rust
+// Note: in actual code you may want to use `fn() -> E`,
+// to side-step drop check, but that's not too important for us
+struct ResultFamily<E>(PhantomData<E>);
+
+impl<T, E> OneTypeParam<E> for ResultFamily<T> {
+    type This = Result<T, E>;
+}
+```
+
+And depending on which one we use, we would have different semantics.
+
 # Usage
 
-TODO
+I mentioned in the last post that using this method requires a lot of bounds. Let's see what I meant by that.
+
+Let's write a function that composes two closures that return monads. Here we don't really care about *how* this is implemented (although I will provide the implementation in the end), but more about  the signature and everything required for that.
+
+Let's start with the skeleton with a HKT-like syntax, and we'll reify it into our [definition]({% post_url 2021-02-15-Type-Families-1 %}#monad_definition) of `Monad` from part 1.
+
+```rust
+fn compose_monad<M, F, G, A, B, C>(
+    monad: M,
+    f: F,
+    g: G
+) -> impl FnOnce(A) -> M<C>
+where
+    F: FnOnce(A) -> M<B>,
+    G: FnOnce(B) -> M<C>,
+{
+    move |a| f(a).bind(g)
+}
+```
+
+First: of course this doesn't compile. It's not even valid Rust syntax. But this is what HKT could look like in Rust. Second: Lots of type parameters! Let's see what they all mean:
+
+* M - What monad? `Option`, `Result<_, E>`, `Vec`, something else?
+* F - The first closure that will be applied
+* G - The second closure that will be applied
+* A - The parameter for the first closure
+* B - The parameter for the second closure, *and* what's contained in the monadic output of the first closure
+* C - what's contained in the monadic output of the second closure
+
+Now how to we reify this? First we know that `M` must be a monad, so let's introduce that bound, and `Monad` implies `OneTypeParam`, so we can use the [`This` type alias]({% post_url 2021-02-15-Type-Families-1 %}#this_alias_definition) to represent `M<A>`, `M<B>`, and `M<C>`.
+
+```rust
+fn compose_monad<M, F, G, A, B, C>(
+    monad: M,
+    f: F,
+    g: G
+) -> impl FnOnce(A) -> This<M, C>
+where
+    M: Monad<A, B> + Monad<B, C>,
+    F: FnOnce(A) -> This<M, B>,
+    G: FnOnce(B) -> This<M, C>,
+{
+    move |a| f(a).bind(monad, g)
+}
+```
+
+Notice how we needed to declare `Monad` twice. This is unsatisfactory. It would be nice if we could just say the following and be on our way.
+
+```rust
+fn compose_monad<M, F, G, A, B, C>(
+    monad: M,
+    f: F,
+    g: G
+) -> impl FnOnce(A) -> This<M, C>
+where
+    M: Monad,
+    F: FnOnce(A) -> This<M, B>,
+    G: FnOnce(B) -> This<M, C>,
+{
+    move |a| f(a).bind(g)
+}
+```
+
+Granted this is a small case, but even for such a minor function there is a lot of annotation. This annotation burden only gets worse as complexity increases.
 
 # Next Time
 
