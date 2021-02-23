@@ -9,7 +9,9 @@ Do you want to use Higher Kinded Types (`HKT`) in Rust? Are you tired of waiting
 
 This is part 1.5 in a series about emulating Higher Kinded Types in Rust, I'd encourage you to read [Part 1]({% post_url 2021-02-15-Type-Families-1 %}) for background before reading this.
 
-I'd like to give credit where credit is due. I first heard of the idea of type families from nikomatsakis' blogs on [type families](https://smallcultfollowing.com/babysteps/blog/2016/11/03/associated-type-constructors-part-2-family-traits/) and [higher kinded types](https://smallcultfollowing.com/babysteps/blog/2016/11/04/associated-type-constructors-part-3-what-higher-kinded-types-might-look-like/) from back when GATs was called ATCs. In the comments of Part 1, /u/LPTK shared some literature on this topic from OCaml: [Lightweight Higher Kinded Polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf), what we are doing is called type-level defunctionalisation[<sup>1</sup>](#note_1){: #note_1_back } ([comment link](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/gnxuz0y?utm_source=share&utm_medium=web2x&context=3)). /u/Krautoni also shared that [Arrow-KT](https://arrow-kt.io/) also uses defunctionalisation to implement `HKT` atop Kotlin's type system and GHC uses defunctionalisation to lower ~~redacted~~[<sup>2</sup>](#note_2){: #note_2_back } to GHC core. All of these are very interesting, and are definitely worth reading.
+Before we begin, I'd like to give credit where credit is due. I first heard of the idea of type families from nikomatsakis' blogs on [type families](https://smallcultfollowing.com/babysteps/blog/2016/11/03/associated-type-constructors-part-2-family-traits/) and [higher kinded types](https://smallcultfollowing.com/babysteps/blog/2016/11/04/associated-type-constructors-part-3-what-higher-kinded-types-might-look-like/) from back when GATs was called ATCs (Associated Type Constructors). The ideas from Part 1 where largely adapted from those posts to fit stable Rust.
+
+Additional Readings: In the comments of Part 1, /u/LPTK shared some literature on this topic from OCaml: [Lightweight Higher Kinded Polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf), what we are doing is called type-level defunctionalisation[<sup>1</sup>](#note_1){: #note_1_back } ([comment link](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/gnxuz0y?utm_source=share&utm_medium=web2x&context=3)). /u/Krautoni also shared that [Arrow-KT](https://arrow-kt.io/) also uses defunctionalisation to implement `HKT` atop Kotlin's type system and GHC uses defunctionalisation to lower ~~redacted~~[<sup>2</sup>](#note_2){: #note_2_back } to GHC core. All of these are very interesting, and are definitely worth reading.
 
 In [Part 1]({% post_url 2021-02-15-Type-Families-1 %}) I introduced the idea of type families, but without much explanation about *why* they worked, let's dig in now!
 
@@ -43,19 +45,17 @@ The first part is
 struct OptionFamily;
 ```
 
-Where we use a zero-sized type as a token for some idea. This is actually a common feature of Rust, this is how functions are implemented. For example:
+Where we use a zero-sized type as a token to represent some idea, in this case a kind `Type -> Type`. This is actually a common feature of Rust, this is how functions are implemented. For example:
 
 ```rust
 fn foo() {}
 ```
 
-`foo` is a zero-sized value that has a unique type (In errors it's shown as `fn() {foo}`). Note this *isn't* `fn()`, a function pointer, but some anonymous zero-sized type. Closures are implemented in [a similar way]({% post_url 2019-01-17-Closures-Magic-Functions %}). This allows Rust to minimize the size of objects, and more easily optimize away function and closures calls (For example, in iterator chains). We can also use this idea of zero sized tokens to represent some global resource, for example a [`Global`](https://doc.rust-lang.org/alloc/alloc/struct.Global.html) allocator.
-
-Using `rustc`'s notation, `OptionFamily` is being used to represent the idea of `fn(Type) -> Type {Option}`. A function that takes a `Type` and returns the a `Type` (Which happens to be `Option<InputType>`).
+`foo` is a zero-sized value that has a unique type (In errors `foo`'s type shown as `fn() {foo}`). Note this *isn't* `fn()`, a function pointer, but some anonymous zero-sized type. Closures are implemented in [a similar way]({% post_url 2019-01-17-Closures-Magic-Functions %}). This allows Rust to minimize the size of objects, and more easily optimize away function and closures calls (For example, in iterator chains). We can also use this idea of zero sized tokens to represent some global resource, for example a [`Global`](https://doc.rust-lang.org/alloc/alloc/struct.Global.html) allocator. So overall zero-sized tokens are a general concept that can be used in a variety of places.
 
 # Traits are Functions Declarations and Impls are Function Definitions
 
-Here I think it's nice to first take a look at Haskell[<sup>3</sup>](#note_3){: #note_3_back }.
+Here I think it's interesting how similar Haskell[<sup>3</sup>](#note_3){: #note_3_back } is to Rust.
 
 ```haskell
 -- Function declaration
@@ -77,11 +77,11 @@ impl<A> OneTypeParam<A> for OptionFamily {
 }
 ```
 
-O.o how similar! This is the core idea behind generic meta-programming in Rust (I bet you didn't see that coming\![<sup>4</sup>](#note_4){: #note_4_back }). Here's the core idea, non-generic traits represent a function with a single argument: the type that they are implemented on. Each generic parameter increase the number of arguments to the function by one. Each item in the trait is an output.
+O.o how similar! This is the core idea behind generic meta-programming in Rust (I bet you didn't see that coming\![<sup>4</sup>](#note_4){: #note_4_back }). Non-generic traits represent a function with a single input, the type that they are implemented on. Each generic parameter increase the number of inputs to the function by one. Each associated type models an output. So each "function" can have any number of inputs and outputs.
 
-So by having one generic parameter and one associated type, `OneTypeParam` has two functional parameters and one return value, just like `one_param` in Haskell! Also like in Haskell, this definition is split from the declaration.
+So by having one generic parameter and one associated type, `OneTypeParam` has two inputs and one output, just like `one_param` in Haskell! Also like in Haskell, this definition is split from the declaration.
 
-However there is one minor difference and one major difference. The minor difference: in Rust you can have multiple "return" types. Just add more associated types. Each return type also has a name. In Haskell, this can be modelled using records, so the difference isn't significant, but it's worth mentioning. The major difference: the Rust type-level syntax is ***way*** more verbose. This makes anything but the simplest generic meta-programs almost inscrutable, so I don't recommend using this unless you need to.
+However there is one minor difference and one major difference. The minor difference: in Rust you can have multiple "return" types. Each return type also has a name. In Haskell, this can be modelled using records, so the difference isn't significant, but it's worth mentioning. The major difference: the Rust type-level syntax is ***way*** more verbose. This makes anything but the simplest generic meta-programs almost inscrutable, so I don't recommend using generic meta-programming unless you need to.
 
 Earlier in this post I said:
 
@@ -101,7 +101,7 @@ Let's tie this up in a bow with `Result`. In Part 1 I said:
 
 > * `Result` has the kind `Type -> Type -> Type`
 
-So if we want to model `Result` in it's most general fashion, we need something like
+So if we want to model `Result` in it's most general fashion, we need to model a function that takes two additional parameters:
 
 ```rust
 struct ResultFamily;
@@ -148,7 +148,7 @@ impl<T, E> OneTypeParam<T> for ResultFamily<E> {
 }
 ```
 
-And that's how we get the implementation shown in Part 1. But why does this work? For the exact same reason as traits, adding a generic parameter to a struct increases it's functional parameters, so instead of `ResultFamily: Type` it is now `ResultFamily: Type -> Type`. If we look a the broader picture, we see that we've transformed `Result: Type -> Type -> Type` into `ResultFamily: Type -> Type`. This is currying in action! Just like doing the following in normal Rust.
+And that's how we get the [implementation]({% post_url 2021-02-15-Type-Families-1 %}#otp_impls) shown in Part 1. But why does this work? Because, like traits, we can think of a generic `struct` as a function. Each generic parameter is is an input, but `struct` "functions" have only one output (the struct itself). So instead of `ResultFamily: Type` it is now `ResultFamily: Type -> Type`. If we look a the broader picture, we see that we've transformed `Result: Type -> Type -> Type` into `ResultFamily: Type -> Type`. This is currying in action! Just like doing the following in normal Rust.
 
 ```rust
 fn curry_result(
@@ -232,11 +232,13 @@ let plus_one_times_two = compose_monad(
 );
 ```
 
-Notice how we needed to declare `Monad` twice. This doesn't scale well as complexity increases.
+Notice how we needed to declare `Monad` twice, for each pair of applications we need. This doesn't scale well as complexity increases. It also exposes implementation details of this function, which is also bad. Finally (and *most* importantly) we need the ugly `This<T, U>` syntax instead of the nice `T<U>` syntax.
 
 # Next Time
 
 Next time in Part 2, we'll properly introduce GATs and discover a way to reduce the number of required bounds when using `HKT` in Rust.
+
+# Footnotes
 
 <sup>1</sup> Eh, functions at the type level, what are these people on about. Rust doesn't have functions at the type level /s. (We'll explore this in this post) ([back](#note_1_back))
 {: #note_1 }
@@ -244,7 +246,7 @@ Next time in Part 2, we'll properly introduce GATs and discover a way to reduce 
 <sup>2</sup> The actual comment is a spoiler for what's upcoming in this post! I'll fill in the blanks afterwards :). If you are fine with a minor spoiler, here's the [comment link](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/go5n2ux?utm_source=share&utm_medium=web2x&context=3) ([back](#note_2_back))
 {: #note_2 }
 
-<sup>3</sup> Although I'm using Haskell here, I recommend you use Proglog to model out your generic meta-programming. It's far closer to how the trait solver actually works, so it will give better feedback on what's possible and what isn't. ([back](#note_3_back))
+<sup>3</sup> Although I'm using Haskell here, I recommend you use Prolog to model out your generic meta-programming. It's far closer to how the trait solver actually works, so it will give better feedback on what's possible and what isn't. ([back](#note_3_back))
 {: #note_3 }
 
 <sup>4</sup> Unless of course you are /u/Michael-F-Bryan! who mentioned how close this felt to template meta-programming in C++ ([back](#note_4_back))

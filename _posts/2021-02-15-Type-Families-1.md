@@ -90,6 +90,7 @@ impl<A, E> OneTypeParam<A> for ResultFamily<E> {
     type This = Result<A, E>;
 }
 ```
+{: #otp_impls }
 
 Note how a `trait` can act as a function over types, so you can encode the idea `Type -> Type` using a trait!
 
