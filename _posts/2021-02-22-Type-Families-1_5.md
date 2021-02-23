@@ -238,6 +238,10 @@ Notice how we needed to declare `Monad` twice, for each pair of applications we 
 
 Next time in Part 2, we'll properly introduce GATs and discover a way to reduce the number of required bounds when using `HKT` in Rust.
 
+If you can't wait and must know more, check out [`type-families`](https://github.com/rustyyato/type-families), an experimental crate that implements the ideas outlined in this blog post.
+
+You can discuss this on reddit [here](https://www.reddit.com/r/rust/comments/lql7hh/generalizing_over_generics_in_rust_part_15/), on users.rust-lang.org [here](https://users.rust-lang.org/t/generalizing-over-generics-in-rust-part-1-5-mechanisms/56038/2), or twitter [here](https://twitter.com/RustyYato/status/1364238318720999428?s=20)
+
 # Footnotes
 
 <sup>1</sup> Eh, functions at the type level, what are these people on about. Rust doesn't have functions at the type level /s. (We'll explore this in this post) ([back](#note_1_back))
