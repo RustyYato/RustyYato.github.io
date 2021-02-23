@@ -250,7 +250,7 @@ You can discuss this on reddit [here](https://www.reddit.com/r/rust/comments/lql
 <sup>2</sup> The actual comment is a spoiler for what's upcoming in this post! I'll fill in the blanks afterwards :). If you are fine with a minor spoiler, here's the [comment link](https://www.reddit.com/r/rust/comments/ll9un4/generalizing_over_generics_in_rust_part_1_aka/go5n2ux?utm_source=share&utm_medium=web2x&context=3). /u/Karutoni also provided a YouTube [link](https://www.youtube.com/watch?app=desktop&v=x3evzO8O9e8) to how Haskell does type inference, which goes into more details. ([back](#note_2_back))
 {: #note_2 }
 
-<sup>3</sup> Although I'm using Haskell here, I recommend you use Prolog to model out your generic meta-programming. It's far closer to how the trait solver actually works, so it will give better feedback on what's possible and what isn't. ([back](#note_3_back))
+<sup>3</sup> Although I'm using Haskell here, I recommend you use Prolog to model out your generic meta-programming. It's far closer to how the trait solver actually works, so it will give better feedback on what's possible and what isn't. edit: /u/jswrenn showed off [tyrade](https://github.com/willcrichton/tyrade) a proc-macro that compiles a sub-set of Rust to type-level code! This makes it really easy to write maintainable type-level code. ([back](#note_3_back))
 {: #note_3 }
 
 <sup>4</sup> Unless of course you are /u/Michael-F-Bryan! who mentioned how close this felt to template meta-programming in C++ ([back](#note_4_back))
