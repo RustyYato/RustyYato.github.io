@@ -34,3 +34,4 @@ I've also work on a number of open source projects, chief among them:
    * in [`dashmap`](https://github.com/xacrimon/dashmap) - [soundness hole](https://github.com/xacrimon/dashmap/issues/10), [PR](https://github.com/xacrimon/dashmap/pull/11)
    * in [`evmap`](https://github.com/jonhoo/left-right) - [soundness hole](https://github.com/jonhoo/left-right/issues/75)
    * in [`stowaway`](https://github.com/Lucretiel/stowaway/) - [soundness hole](https://github.com/Lucretiel/stowaway/issues/8)
+   * in [`logos`](https://github.com/maciejhirsz/logos/) - [soundness hole](https://github.com/maciejhirsz/logos/issues/375), [PR](https://github.com/maciejhirsz/logos/pull/376)
