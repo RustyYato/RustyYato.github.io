@@ -25,6 +25,7 @@ These handles will be thin wrappers around those pointers.
 
 ```rust
 use std::cell::{Cell, UnsafeCell};
+use std::rc::Rc;
 
 struct DoubleBuffer<T> {
     which: Cell<bool>,
@@ -88,8 +89,19 @@ impl<T> WriteHandle<T> {
 }
 
 impl<T> ReadHandle<T> {
+    fn read_buffer(&self) -> &T {
+        let which = self.buffer.which.get();
+        // SAFETY: we only get read access to `!which`, this is disjoint with
+        // `which` so this can't alias WriteHandle::write_buffer
+        let buffer = &self.buffer.data[(!which) as usize];
+        unsafe { &*buffer.get() }
+    }
 }
 ```
+
+This API allows us to swap buffers, and easily access each buffer. The `ReadHandle`
+can only access the current read buffer, and the `WriteHandle` can only mutably access the
+current write buffer.
 
 Alright, this looks like a good api. Do you see anything wrong with it? 
 
@@ -199,6 +211,11 @@ thread 'main' panicked at src/main.rs:42:9:
 Tried to swap buffers while there was an active reader
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
+
+The key innovation here is ensuring that the writers cannot swap the buffers while there is an active reader.
+This ensures the write buffer is not aliased, so we are allowed to get a `&mut _` to the write buffer.
+This has the knock on effect that we cannot expose references from the `ReadHandle` because the `WriteHandle`
+needs to know when the `ReadHandle` is accessing the read buffer to prevent bad swaps.
 
 Now we have a workable API for double buffering. But it required us to dip into unsafe code.
 Next time we'll figure out what this means and why it's ok in [Interlude on Unsafe](Double-Buffer-4.html).

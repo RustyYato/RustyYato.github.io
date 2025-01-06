@@ -157,7 +157,23 @@ But the major downside is now the trait is unsafe, so less people are willing to
 An unsafe block is a unit of code that has a precondition. These are justified by appealing to safety invariants, safety preconditions (if inside an unsafe function), or
 control flow before the block.
 
-If you cannot justify an unsafe block via these two ways, then you likely have an unsound unsafe block. Now this may be fine if you control all usages of this block, for
+For example we can check some of the preconditions to ensure that they are met
+
+```rust
+fn truncate_vec_i32(v: &mut Vec<i32>) {
+    if 10 <= v.len() {
+        // SAFETY:
+        // by the safety invariants of Vec, we know that v.len() <= v.capacity()
+        // by the safety invariants of Vec, we know that 0..v.len() is initialized
+        // so we know that 10 <= v.len() <= v.capacity()
+        // so we know that v.len()..10 is an empty range, so it is vacuously true
+        // that all elements in that range are initialized
+        unsafe { v.set_len(0) }
+    }
+}
+```
+
+If you cannot justify an unsafe block via these three ways, then you likely have an unsound unsafe block. Now this may be fine if you control all usages of this block, for
 example, for convenience you may wrap an unsafe block in a "safe" functions, and this is unsound. But if you control all call-sites of then you can justify the unsafe
 block by appealing to that control. I would encourage you to stay away from this practice, since it makes code harder to maintain in the long run.
 
@@ -174,6 +190,39 @@ fn clear_vec_i32(v: &mut Vec<i32>) {
 
 Now if we changed `i32` to any other type, this function would *remain safe*, but it may have the undesired behavior of leaking values (which isn't a problem for `i32`).
 But since leak freedom isn't a guarantee that Rust makes, this is still considered safe.
+
+## Thread Safety
+
+As you may know, Rust uses `Send`/`Sync` and ownership/borrowing to enforce thread-safety. But how does this work?
+
+`Send` and `Sync` are unsafe traits, so as discussed above, they have safety guarantees associated with them that all types that implement `Send` and `Sync` must uphold.
+
+From the docs, here's the safety guarantees that must be upheld
+
+> Send := Types that can be transferred across thread boundaries
+> Sync := Types for which it is safe to share references between threads
+
+Here's how I like to think about them
+* `T: Send` - is another thread allowed to get exclusive access to any value of `T`
+    * the answer to this question is usually no if there is some kind of unsynchronized shared ownership of values of `T`
+* `T: Sync` - is another thread allowed to get shared access to any value of `T`
+    * the answer to this question is usually no if there is some kind of unsynchronized shared mutation possible through any API on `T`
+
+For example,
+ * `u8: Send + Sync` because every value of `u8` has at most one owner, and there is no mutation possible via `&u8`.
+ * `Cell<u8>: Send + !Sync` because every value of `Cell<u8>` has at most one owner, and you can use `Cell::set` to perform unsynchronized shared mutation
+ * `MutexGuard<'_, u8>: !Send + Sync` because on some operating systems, the mutex guard is also owned by the thread (for example, to perform deadlock detection),
+    and there is no way to automatically signal that a mutex guard is moving to another thread. And there is no mutation possible via `&MutexGuard<'_, u8>`.
+ * `Rc<u8>: !Send + !Sync` because `Rc` is the prototypical example of unsynchronized shared ownership, and `Rc::clone` does unsynchronized mutation of it's reference counters
+
+As you can see this framing of `Send` and `Sync` is very powerful, and we will be using it to decide what bounds we need to implement for `Send` and `Sync`.
+
+You can read more about them in the [Rustonomicon](https://doc.rust-lang.org/nomicon/send-and-sync.html).
+
+## Next Time
+
+Next time we will be converting our Double Buffer to a multi-threaded double buffer. How would you do this?
+Try to create a concurrent double buffer yourself! What strategy do you use, and how do you prove that it is correct?
 
 ---
 

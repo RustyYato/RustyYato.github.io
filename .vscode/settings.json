@@ -5,6 +5,7 @@
         "flashmap",
         "mpsc",
         "Rustonomicon",
+        "unsynchronized",
         "usize",
         "Yato"
     ]
