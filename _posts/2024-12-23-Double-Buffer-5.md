@@ -266,3 +266,7 @@ The write locks the `active_readers` for the next buffer, then does the swap. Th
 point to). Now, this implementation is still flawed, it ties read scaling back to the writer. And if a writer is constantly swapping,
 then readers will be unable to make progress. So this is not ideals. But it is *sound*, which is far better than we can say about the
 initial implementation.
+
+#TODO - write an informal proof that this is correct
+
+Next time we'll figure out how to ensure that readers scale independently of the writer [Double Buffers - Concurrent Updates Part 2](Double-Buffer-6.html).

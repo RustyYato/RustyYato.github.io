@@ -12,7 +12,8 @@ Here is a preview of what is to come
  * [**A Fresh Start**](Double-Buffer-3.html) - use what we learned in **Humble Beginnings** to implement a better to use double buffer library
  * [**Interlude on Unsafe**](Double-Buffer-4.html) - explore how unsafe interacts with various parts of Rust, what are safety contracts more
  * [**Concurrent Updates Part 1**](Double-Buffer-5.html) - adapt the single-threaded library to an naive consistent multi-threaded double buffer
- * **Concurrent Updates Part 2** - convert the naive double buffer to an eventually consistent multi-threaded double buffer
+ * [**Interlude on Atomics**](Double-Buffer-6.html) - convert the naive double buffer to an eventually consistent multi-threaded double buffer
+ * [**Concurrent Updates Part 2**](Double-Buffer-7.html) - convert the naive double buffer to an eventually consistent multi-threaded double buffer
  * **Generalizing Part 1** - generalize the library to handle custom pointers, and make it `no_std` compatible
  * **Generalizing Part 2** - generalize the strategy used to synchronize the two buffers
  * **A Better Strategy** - implement a better strategy designed by [`Cassy343`](https://github.com/Cassy343) in [`flashmap`](https://crates.io/crates/flashmap)
