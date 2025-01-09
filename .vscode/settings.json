@@ -6,6 +6,7 @@
         "flashmap",
         "jonhoo",
         "mpsc",
+        "println",
         "Rustonomicon",
         "unsynchronized",
         "usize",
