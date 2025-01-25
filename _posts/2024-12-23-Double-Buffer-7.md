@@ -73,8 +73,8 @@ use std::cell::{Cell, UnsafeCell};
 use std::rc::Rc;
 
 struct DoubleBuffer<T> {
-    which: Cell<bool>,
-    active_readers: Cell<u32>,
+    which: AtomicBool,
+    active_readers: AtomicU32,
     // we use UnsafeCell here because we are formally sharing the data, even if they are all accesses are disjoint
     data: [UnsafeCell<T>; 2],
 }
