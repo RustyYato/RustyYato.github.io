@@ -119,6 +119,10 @@ impl<T, O> OpWriteHandle<T, O> {
         }
     }
 
+    pub fn get(&self) -> &WriteHandle<T> {
+        self.handle.get()
+    }
+
     pub fn push(&mut self, op: O) {
         self.ops.push(op);
     }
