@@ -48,20 +48,20 @@ struct WriteHandle<K, V> {
     handle: buffers::OpWriteHandle<HashMap<K, V>, HashMapOp<K, V>>,
 }
 
-struct ReaderHandle<K, V> {
+struct ReadHandle<K, V> {
     handle: buffers::ReaderHandle<HashMap<K, V>>
 }
 
 // a read guard represents a lock on the hashmap, and writers are not allowed
 // to swap if there is an old enough read guard still alive
-struct ReaderGuard<'a, K, V> {
-    handle: buffers::ReaderGuard<'a, HashMap<K, V>>
+struct ReadGuard<'a, K, V> {
+    guard: buffers::ReaderGuard<'a, HashMap<K, V>>
 }
 ```
 
-Now because we are using `OpWriteHandle` the `ReaderGuard` doesn't block swaps immediately,
+Now because we are using `OpWriteHandle` the `ReaderGuard` doesn't block on swaps immediately,
 instead it will block the second swap after it was created. However, we expect that users will
-not keep reader guards around too long, so this should be fine.
+not keep reader guards around too long, so this means we normally expect `publish` to be very fast.
 
 ```rust
 impl<K, V> WriteHandle<K, V> {
@@ -75,8 +75,8 @@ impl<K, V> WriteHandle<K, V> {
         }
     }
 
-    pub fn reader(&self) -> ReaderGuard {
-        self.handle.get().reader()
+    pub fn read_handle(&self) -> ReaderGuard {
+        self.handle.get().read_handle()
     }
 }
 
@@ -95,6 +95,25 @@ impl<K: Clone + Hash + Eq, V: Clone> WriteHandle<K, V> {
 
     pub fn publish(&mut self) {
         self.handle.swap_buffers()
+    }
+}
+```
+
+And for the reader is just a very thin wrapper around `buffers::ReadHandle`
+and `buffers::ReadGuard`.
+
+```rust
+impl<K: Hash + Eq, V> ReadHandle<K, V> {
+    pub fn read(&self) -> ReadGuard<'_, K, V> {
+        ReadGuard { guard: self.handle.read() }
+    }
+}
+
+impl<K, V> Deref for ReadGuard<'_, K, V> {
+    type Target = HashMap<K, V>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.guard
     }
 }
 ```

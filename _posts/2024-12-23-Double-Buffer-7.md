@@ -109,6 +109,20 @@ unsafe impl<T: Send> Send for DoubleBuffer<T> {}
 // from &DoubleBuffer, we can access &mut T, and &T
 // Mutex<Vec<...>> is Sync
 unsafe impl<T: Send + Sync> Sync for DoubleBuffer<T> {}
+
+impl<T> WriteHandle<T> {
+    pub fn new(buffers: [T; 2]) -> Self {
+        Self {
+            last_epochs: Vec::new(),
+            buffer: Arc::new(DoubleBuffer {
+                which: AtomicBool::new(false),
+                epochs: Mutex::new(Vec::new()),
+                cv: Condvar::new(),
+                data: buffers.map(UnsafeCell::new),
+            })
+        }
+    }
+}
 ```
 
 Then to create new readers, we need to lock the `epochs` list, add a new element,
@@ -265,3 +279,53 @@ impl<T> WriteHandle<T> {
 ```
 
 We will see why we split this up next time in [next time](Double-Buffer-8.html).
+
+Finally let's provide accessors. Note that it doesn't really matter which buffer is 
+accessed, as long as readers can't access the mutable buffer that the writes have access to.
+We will use `!self.which` for the reader buffer and `self.which` for the writer buffer.
+
+```rust
+impl<T> DoubleBuffer<T> {
+    fn read_buffer(&self) -> &T {
+        unsafe { &*self.handle.data.get().cast::<T>().add((!self.which) as usize) }
+    }
+
+    /// # Safety
+    /// 
+    /// Only the writer is allowed to access this buffer
+    unsafe fn write_buffer(&self) -> &T {
+        unsafe { &*self.handle.data.get().cast::<T>().add(self.which as usize) }
+    }
+
+    /// # Safety
+    /// 
+    /// Only the writer is allowed to access this buffer
+    unsafe fn write_buffer_mut(&self) -> &mut T {
+        unsafe { &mut *self.handle.data.get().cast::<T>().add(self.which as usize) }
+    }
+}
+
+impl<T> WriteHandle<T> {
+    pub fn read_buffer(&self) -> &T {
+        self.buffer.read_buffer()
+    }
+
+    pub fn write_buffer(&self) -> &T {
+        // SAFETY: we are the writer
+        unsafe { self.buffer.write_buffer() }
+    }
+
+    pub fn write_buffer(&mut self) -> &mut T {
+        // SAFETY: we are the writer
+        unsafe { self.buffer.write_buffer() }
+    }
+}
+
+impl<T> Deref for ReadGuard<T> {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        self.handle.buffer.read_buffer()
+    }
+}
+```
