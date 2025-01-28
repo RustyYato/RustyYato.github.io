@@ -163,9 +163,13 @@ since the `WriteHandle` assumes that all even epochs are readers which aren't cu
 Then after completing the read, we need to notify the writer, which may be sleeping on the condvar
 to ensure that it wakes up and continues the swap.
 
+Note: we must use `&mut self` to prevent someone from starting a read while there is already a read in progress.
+Since we are not handling reentrant reads. If someone wants to make multiple reads at a time, then they
+should use multiple `ReadHandle`s.
+
 ```rust
 impl<T> ReadHandle<T> {
-    pub fn read(&self) -> ReadGuard<'_, T> {
+    pub fn read(&mut self) -> ReadGuard<'_, T> {
         let epoch = self.epoch.load(Ordering::Relaxed);
         assert!(epoch % 2 == 0, "Read failed: detected a leaked `ReadGuard`, which put this `ReadHandle` into an invalid state");
 

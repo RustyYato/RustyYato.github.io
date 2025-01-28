@@ -14,12 +14,12 @@ Here is a preview of what is to come
  * [**Concurrent Updates Part 1**](Double-Buffer-5.html) - adapt the single-threaded library to an naive consistent multi-threaded double buffer
  * [**Interlude on Atomics**](Double-Buffer-6.html) - convert the naive double buffer to an eventually consistent multi-threaded double buffer
  * [**Concurrent Updates Part 2**](Double-Buffer-7.html) - convert the naive double buffer to an eventually consistent multi-threaded double buffer
- * **Generalizing Part 1** - generalize the library to handle custom pointers, and make it `no_std` compatible
- * **Generalizing Part 2** - generalize the strategy used to synchronize the two buffers
  * [**Delayed Swaps**](Double-Buffer-8.html) - implement an important optimization to reduce the overhead of swaps
+ * [**Concurrent HashMap**](Double-Buffer-9.html) - implement a concurrent, eventually consistent, hashmap with a completely safe interface (including `retain`!)
+ * [**Generalized Strategy**](Double-Buffer-10.html) - generalize the strategy used to synchronize the two buffers
+ * [**Generalized Strategy Part 2**](Double-Buffer-11.html) - generalize the data structure to work with the generalized strategy
  * **A Better Strategy** - implement a better strategy designed by [`Cassy343`](https://github.com/Cassy343) in [`flashmap`](https://crates.io/crates/flashmap)
  * **Async Compatibility** - extend support to allow async buffer swaps
- * [**Concurrent HashMap**](Double-Buffer-8.html) - implement a concurrent, eventually consistent, hashmap with a completely safe interface (including `retain`!)
  * **Subtle Tricks** - explore some tricks to regain some more power out of our double buffer library
 
 At the end of each section, I will leave you with some questions. These will usually be covered in the

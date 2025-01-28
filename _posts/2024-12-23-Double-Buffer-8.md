@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Double Buffers - Concurrent Updates Part 2"
+title:  "Double Buffers - Delayed Swaps"
 date:   2024-12-23 12:00:00 -0000
 categories: unsafe,advanced rust,library design
 ---
@@ -34,7 +34,7 @@ Maybe it's time for a new `WriteHandle` to expose a slightly different API?
 
 ```rust
 pub struct DelayWriteHandle<T> {
-    swap: Option<SwapInfo>, // << we'll go over this later
+    swap: Option<SwapInfo>,
     handle: WriteHandle<T>
 }
 

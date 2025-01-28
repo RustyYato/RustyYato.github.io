@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Double Buffers - Concurrent Updates Part 2"
+title:  "Double Buffers - Concurrent HashMap"
 date:   2024-12-23 12:00:00 -0000
 categories: unsafe,advanced rust,library design
 ---
@@ -117,3 +117,8 @@ impl<K, V> Deref for ReadGuard<'_, K, V> {
     }
 }
 ```
+
+With that we now have a complete eventually consistent concurrent hash map.
+Wow! All that prep work make the hashmap portion pretty trivial. Next time,
+we will work on generalizing the work we've done so far, in preparation
+for a new and improved synchronization algorithm. 
