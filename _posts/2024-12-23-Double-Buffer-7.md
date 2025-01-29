@@ -261,7 +261,7 @@ impl SwapInfo {
         // if all readers are done reading from the current buffer
         // then set the start index to the end and return true
 
-        self.start = epochs.len();
+        self.start = last_epochs.len();
 
         true
     }
