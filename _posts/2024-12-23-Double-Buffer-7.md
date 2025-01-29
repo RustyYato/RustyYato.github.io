@@ -77,7 +77,13 @@ We also need to ensure that `DoubleBuffer` is `Sync` under the right conditions.
 From thread safety in [Interlude on Unsafe](Double-Buffer-4.html), we can justify
 `Send` and `Sync` since
 1. `DoubleBuffer<T>` doesn't have any unsynchronized shared ownership if `T` doesn't have unsynchronized shared ownership
-2. `DoubleBuffer<T>` doesn't have any unsynchronized shared mutation if `T` doesn't have unsynchronized shared mutation
+2. `DoubleBuffer<T>` doesn't have any unsynchronized shared mutation if `T` doesn't have unsynchronized shared ownership
+    * This isn't strictly required since we are using `Arc`, but if we instead used references, then 
+        this does become required. So to be on the safe side we will require it.
+        For references this is because the `WriteHandle` will hold a `&DoubleBuffer<T>`, and we need to ensure that
+        this type is only `Send` if `T: Send`. Otherwise we would be able to send a `MutexGuard` to another thread.
+        Which is unsound on some platforms.
+3. `DoubleBuffer<T>` doesn't have any unsynchronized shared mutation if `T` doesn't have unsynchronized shared mutation
 
 ```rust
 struct DoubleBuffer<T> {
