@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Double Buffers - Concurrent Updates Part 1"
-date:   2024-12-23 12:00:00 -0000
+date:   2056-12-23 12:00:00 -0000
 categories: unsafe,advanced rust,library design
 ---
 

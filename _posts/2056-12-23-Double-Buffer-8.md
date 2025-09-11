@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Double Buffers - Delayed Swaps"
-date:   2024-12-23 12:00:00 -0000
+date:   2056-12-23 12:00:00 -0000
 categories: unsafe,advanced rust,library design
 ---
 
